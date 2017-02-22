@@ -6,7 +6,7 @@ public abstract class Unit extends Asset {
 	
 	
 	public Unit(float x, float y, int hp, int ap, float speed) {
-		super(x, y, hp);
+		super(x, y, 10, hp);
 		attackPower = ap;
 		this.speed = speed;
 	}
