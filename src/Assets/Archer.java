@@ -3,7 +3,7 @@ package Assets;
 public class Archer extends Unit {
 	final int buildTime = 5;
 	
-	public Archer(float x, float y, int hp, int ap, float speed) {
-		super(x, y, hp, ap, speed);		
+	public Archer(double x, double y) {
+		super(x, y, 4, 3, 2);		
 	}
 }

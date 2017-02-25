@@ -28,4 +28,8 @@ public class Map {
 			System.out.println("");
 		}
 	}
+	
+	public char getTile(int x,int y){
+		return levelmap[x][y];
+	}
 }

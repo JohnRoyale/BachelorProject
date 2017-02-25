@@ -27,7 +27,11 @@ public class Model extends Observable  {
 		lostPlayer1 = new ArrayList<Asset>();
 		player2 = new ArrayList<Asset>();
 		lostPlayer2 = new ArrayList<Asset>();
-
+		player1.add(new Building(15.0/16,2.0/16,10));
+		player1.add(new Building(2.0/16,15.0/16,10));
+		player2.add(new Archer(14.5/16,3.5/16));
+		player2.add(new Spearman(12.25/16,4.16/16));
+		player2.add(new Cavalry(13.875/16,5.43/16));
 	}
 
 	public void order(Unit u, char action) {

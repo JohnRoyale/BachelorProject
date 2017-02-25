@@ -1,16 +1,24 @@
 package Assets;
 
 public abstract class Asset {
-	float xCor,	yCor;
+	double xCor,yCor;
 	int hitPoints;
-	float radius;
+	double diameter;
+
+
 	boolean idle;
-	
-	public Asset(float x, float y,float radius, int hp) {
+	/**
+	 * 
+	 * @param x diameter as factor of the map tile size
+	 * @param y
+	 * @param d
+	 * @param hp
+	 */
+	public Asset(double x, double y,double d, int hp) {
 		xCor = x;
 		yCor = y;
 		idle=true;
-		this.radius=radius;
+		this.diameter=d;
 		hitPoints = hp;
 	}
 	
@@ -19,11 +27,11 @@ public abstract class Asset {
 		yCor = y;
 	}
 	
-	public float getX() {
+	public double getX() {
 		return xCor;
 	}
 	
-	public float getY() {
+	public double getY() {
 		return yCor;
 	}
 	
@@ -43,5 +51,7 @@ public abstract class Asset {
 		this.idle = idle;
 	}
 	
-	
+	public double getDiameter() {
+		return diameter;
+	}
 }
