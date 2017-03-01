@@ -79,8 +79,7 @@ public class Model extends Observable  {
 				continue;
 			} else {
 				for(Asset a: p.assets) {
-				u.collides(a);
-				a.damage(u.getAttackPower());
+				if(u.collides(a)) a.damage(u.getAttackPower());
 				}
 			}
 		}
