@@ -49,11 +49,11 @@ public class View extends JPanel implements Observer {
 	 * @param horOff
 	 * @param verOff
 	 */
-	private void paintAsset(Graphics g, Asset a,int squareSize,int horOff,int verOff) {
+	private void paintAsset(Graphics g, Asset a,int minDimension,int horOff,int verOff) {
 		int n=model.getLevelMap().size;
-		int radius=(int)Math.floor(a.getDiameter()*squareSize);
-		int x=(int)Math.floor((a.getX()-a.getDiameter()/2/n-0.5/n)*n*squareSize);
-		int y=(int)Math.floor((a.getY()-a.getDiameter()/2/n-0.5/n)*n*squareSize);
+		int radius=(int)Math.floor(a.getDiameter()*minDimension);
+		int x=(int)Math.floor((a.getX()-a.getDiameter()/2-0.5/n)*minDimension);
+		int y=(int)Math.floor((a.getY()-a.getDiameter()/2-0.5/n)*minDimension);
 		 
 		Color c;
 		
@@ -104,13 +104,11 @@ public class View extends JPanel implements Observer {
 				
 			}
 		}
-
-		for (Asset a : model.getPlayer1()) {
-			this.paintAsset(g, a,absoluteSquareSize,horizontalOffset,verticalOffset);
-		}
-
-		for (Asset a : model.getPlayer2()) {
-			this.paintAsset(g, a,absoluteSquareSize,horizontalOffset,verticalOffset);
+		for (Player p: model.getPlayerList()) {
+			for (Asset a : p.assets) {
+				System.out.println(a.getX());
+				this.paintAsset(g, a,minDimension,horizontalOffset,verticalOffset);
+			}
 		}
 
 	}

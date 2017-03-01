@@ -37,7 +37,7 @@ public class randomAI implements AI {
 	public void run() {
 		// Generate actions maybe add timer to prevent overloading the queue
 		while (true) {
-			System.out.println("I'm running " + this.toString());
+			//System.out.println("I'm running " + this.toString());
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {

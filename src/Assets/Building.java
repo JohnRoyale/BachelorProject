@@ -2,7 +2,7 @@ package Assets;
 
 public class Building extends Asset {
 
-	public Building(double d, double e, int hp) {
-		super(d, e, 0.8, hp);
+	public Building(int owner, double x, double y, int hp, int mapSize) {
+		super(owner, x, y, 0.8/mapSize, hp);
 	}
 }

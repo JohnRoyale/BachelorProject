@@ -10,10 +10,7 @@ public class Model extends Observable  {
 	
 	Map levelMap;
 
-	ArrayList<Asset> player1;
-	ArrayList<Asset> lostPlayer1;
-	ArrayList<Asset> player2;
-	ArrayList<Asset> lostPlayer2;
+	private ArrayList<Player> playerList; 
 	
 	boolean gameOver=false;
 
@@ -23,25 +20,71 @@ public class Model extends Observable  {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		player1 = new ArrayList<Asset>();
-		lostPlayer1 = new ArrayList<Asset>();
-		player2 = new ArrayList<Asset>();
-		lostPlayer2 = new ArrayList<Asset>();
-		player1.add(new Building(15.0/16,2.0/16,10));
-		player1.add(new Building(2.0/16,15.0/16,10));
-		player2.add(new Archer(14.5/16,3.5/16));
-		player2.add(new Spearman(12.25/16,4.16/16));
-		player2.add(new Cavalry(13.875/16,5.43/16));
+		playerList = new ArrayList<Player>();
+		playerList.add(new Player(0)); //nature
+		playerList.add(new Player(1)); //player 1
+		playerList.add(new Player(2)); //player 2	
+		playerList.get(1).assets.add(new Building(1, 2.0/16, 15.0/16,10,levelMap.size));
+		playerList.get(2).assets.add(new Building(2, 15.0/16, 2.0/16,10,levelMap.size));
 	}
 
 	public void order(Unit u, char action) {
 		// moves unit to new position
+		switch(action) {
+			case('u'): if(!notAccessable(u.getX(), u.getY()-0.1/levelMap.size, u)) {u.setCoordinates(u.getX(), u.getY()-0.1/levelMap.size);}
+			case('d'): if(!notAccessable(u.getX(), u.getY()+0.1/levelMap.size, u)) {u.setCoordinates(u.getX(), u.getY()+0.1/levelMap.size);}
+			case('l'): if(!notAccessable(u.getX()-0.1/levelMap.size, u.getY(), u)) {u.setCoordinates(u.getX()-0.1/levelMap.size, u.getY());}
+			case('r'): if(!notAccessable(u.getX()+0.1/levelMap.size, u.getY(), u)) {u.setCoordinates(u.getX()+0.1/levelMap.size, u.getY());}
+			case('n'): System.out.println("none");
+		}
+		this.checkCollisions(u);
 	}
 	
 	public void order(Building b, char action){
 		// produce new unit at location of building
+		switch(action){
+			case('s'): playerList.get(b.getOwner()).assets.add(new Spearman(b.getOwner(), b.getX(), b.getY(),levelMap.size));
+			case('c'): playerList.get(b.getOwner()).assets.add(new Cavalry(b.getOwner(), b.getX(), b.getY(),levelMap.size));
+			case('a'): playerList.get(b.getOwner()).assets.add(new Archer(b.getOwner(), b.getX(), b.getY(),levelMap.size));
+			case('n'): System.out.println("none");
+			case('b'): System.out.println("busy");
+		}
 	}
 	
+	public boolean notAccessable(double x, double y, Unit u) {
+		//out of bounds check
+		if((x >= levelMap.size || x <= 0 ) || (y >= levelMap.size || y <= 0)) {
+			return false;
+		}
+		
+		//natural obstacle check
+//		for() { 
+//		if()
+//		}
+		
+		//other unit check
+		for(Player p: playerList) {
+			for(Asset a: p.assets) {
+				if(x == a.getX() && y == a.getY() && a != u) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	public void checkCollisions(Unit u) {
+		for(Player p: playerList) {
+			if(p.playerId==u.getOwner()) {
+				continue;
+			} else {
+				for(Asset a: p.assets) {
+				u.collides(a);
+				a.damage(u.getAttackPower());
+				}
+			}
+		}
+	}
 	
 	public void updateAll(){
 		this.setChanged();
@@ -56,12 +99,8 @@ public class Model extends Observable  {
 	public Map getLevelMap() {
 		return levelMap;
 	}
-
-	public ArrayList<Asset> getPlayer1() {
-		return player1;
-	}
-
-	public ArrayList<Asset> getPlayer2() {
-		return player2;
+	
+	public ArrayList<Player> getPlayerList() {
+		return this.playerList;
 	}
 }

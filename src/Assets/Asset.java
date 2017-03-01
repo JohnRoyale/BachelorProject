@@ -1,6 +1,8 @@
 package Assets;
 
+
 public abstract class Asset {
+	int owner;
 	double xCor,yCor;
 	int hitPoints;
 	double diameter;
@@ -14,7 +16,8 @@ public abstract class Asset {
 	 * @param d
 	 * @param hp
 	 */
-	public Asset(double x, double y,double d, int hp) {
+	public Asset(int owner, double x, double y,double d, int hp) {
+		this.owner = owner;
 		xCor = x;
 		yCor = y;
 		idle=true;
@@ -22,7 +25,16 @@ public abstract class Asset {
 		hitPoints = hp;
 	}
 	
-	public void setCoordinates(float x, float y) {
+	public boolean collides (Asset other) 
+	{
+		double distX = this.xCor - other.getX();
+		double distY = this.yCor - other.getY();
+		double distance = Math.sqrt(distX * distX + distY * distY);
+		
+		return distance < ((this.diameter/2) + (other.getDiameter()/2));
+	}
+	
+	public void setCoordinates(double x, double y) {
 		xCor = x;
 		yCor = y;
 	}
@@ -53,5 +65,13 @@ public abstract class Asset {
 	
 	public double getDiameter() {
 		return diameter;
+	}
+	
+	public void setOwner(int owner) {
+		this.owner = owner;
+	}
+	
+	public int getOwner() {
+		return owner;
 	}
 }
