@@ -14,7 +14,7 @@ public class randomAI implements AI {
 	Model model;
 	ConcurrentLinkedQueue<Order> orderQueue;
 	List<Character> actions = Arrays.asList('u', 'd', 'l', 'r', 'n');
-	List<Character> production = Arrays.asList('s', 'c', 'a', 'n', 'b');
+	List<Character> production = Arrays.asList('n', 's', 'a', 'c');
 
 	public randomAI(ConcurrentLinkedQueue<Order> orderQueue, Model m) {
 		this.orderQueue = orderQueue;
@@ -25,7 +25,16 @@ public class randomAI implements AI {
 		Random random = new Random();
 		char action = 'n';
 		if (a.getClass().equals("Building")) {
-			action = production.get(random.nextInt(production.size()));
+			Building b = (Building)a;	
+			if(b.getProductionTimer() > 0) {
+				action = 'b'; //busy producing unit
+				b.setProductionTimer(b.getProductionTimer()-1);
+			} else {
+				action = b.getInProduction(); //signals unit ready for production
+				int next = random.nextInt(production.size()); //get new random for choosing a unit
+				b.setInProduction(production.get(next)); //set new unit in production
+				b.setProductionTimer(next + 3); //sets training time
+			}
 		} else {
 			action = actions.get(random.nextInt(actions.size()));
 		}

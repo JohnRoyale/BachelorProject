@@ -31,10 +31,10 @@ public class Model extends Observable  {
 	public void order(Unit u, char action) {
 		// moves unit to new position
 		switch(action) {
-			case('u'): if(!notAccessable(u.getX(), u.getY()-0.1/levelMap.size, u)) {u.setCoordinates(u.getX(), u.getY()-0.1/levelMap.size);}
-			case('d'): if(!notAccessable(u.getX(), u.getY()+0.1/levelMap.size, u)) {u.setCoordinates(u.getX(), u.getY()+0.1/levelMap.size);}
-			case('l'): if(!notAccessable(u.getX()-0.1/levelMap.size, u.getY(), u)) {u.setCoordinates(u.getX()-0.1/levelMap.size, u.getY());}
-			case('r'): if(!notAccessable(u.getX()+0.1/levelMap.size, u.getY(), u)) {u.setCoordinates(u.getX()+0.1/levelMap.size, u.getY());}
+			case('u'): if(!notAccessable(u.getX(), u.getY()-0.1/levelMap.size, u)) u.setCoordinates(u.getX(), u.getY()-0.1/levelMap.size);
+			case('d'): if(!notAccessable(u.getX(), u.getY()+0.1/levelMap.size, u)) u.setCoordinates(u.getX(), u.getY()+0.1/levelMap.size);
+			case('l'): if(!notAccessable(u.getX()-0.1/levelMap.size, u.getY(), u)) u.setCoordinates(u.getX()-0.1/levelMap.size, u.getY());
+			case('r'): if(!notAccessable(u.getX()+0.1/levelMap.size, u.getY(), u)) u.setCoordinates(u.getX()+0.1/levelMap.size, u.getY());
 			case('n'): System.out.println("none");
 		}
 		this.checkCollisions(u);
@@ -58,9 +58,9 @@ public class Model extends Observable  {
 		}
 		
 		//natural obstacle check
-//		for() { 
-//		if()
-//		}
+		int tileX =(int) x*levelMap.size;
+		int tileY =(int) y*levelMap.size;
+		if(levelMap.getTile(tileX, tileY) == '#') return false;
 		
 		//other unit check
 		for(Player p: playerList) {
