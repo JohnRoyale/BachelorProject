@@ -6,6 +6,6 @@ import Main.Model;
 
 public interface AI extends Runnable {
 	
-	public void determineAction(Asset a, Model model);
+	public void determineAction(Asset a);
 	
 }

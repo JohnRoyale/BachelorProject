@@ -4,7 +4,7 @@ import Assets.Asset;
 import Assets.Unit;
 import Main.Model;
 
-public class neuralNetwork implements AI {
+public class NeuralNetwork implements AI {
 
 
 
@@ -15,7 +15,7 @@ public class neuralNetwork implements AI {
 	}
 
 	@Override
-	public void determineAction(Asset a, Model model) {
+	public void determineAction(Asset a) {
 		// TODO Auto-generated method stub
 		
 	}

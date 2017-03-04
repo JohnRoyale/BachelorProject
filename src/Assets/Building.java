@@ -6,7 +6,7 @@ public class Building extends Asset {
 
 	public Building(int owner, double x, double y, int hp, int mapSize) {
 		super(owner, x, y, 0.8/mapSize, hp);
-		productionTimer = 2; //initial production delay
+		productionTimer = 50; //initial production delay
 		inProduction = 'n'; //initial production state
 	}
 
@@ -16,6 +16,10 @@ public class Building extends Asset {
 
 	public void setProductionTimer(int productionTimer) {
 		this.productionTimer = productionTimer;
+	}
+	
+	public void tic(){
+		this.productionTimer--;
 	}
 
 	public char getInProduction() {

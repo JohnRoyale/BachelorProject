@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Map {
 	char[][] levelmap;
-	int size;
+	public int size;
 	
 	public Map(String fileName) throws FileNotFoundException {
 

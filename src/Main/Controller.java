@@ -1,15 +1,15 @@
 package Main;
 
 import java.awt.BorderLayout;
-import java.util.LinkedList;
 import java.util.Observable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import AI.AI;
-import AI.randomAI;
+
+import AI.*;
+import Assets.*;
 
 public class Controller extends Observable{
 	private AI player1, player2;
@@ -24,8 +24,11 @@ public class Controller extends Observable{
 		model=new Model("map1");
 		model.levelMap.printMap();
 		orderQueue=new ConcurrentLinkedQueue<Order>();
-		player1=new randomAI(orderQueue,model);
-		player2=new randomAI(orderQueue,model);
+		player1=new RandomAI(orderQueue,model,1);
+		player2=new ClassicAI(orderQueue,model,2);
+		
+		
+
 		
 		p1=new Thread(player1);
 		p2=new Thread(player2);
@@ -59,9 +62,13 @@ public class Controller extends Observable{
 	
 	public void update(){
 		int size=orderQueue.size();
-	 
 		for(int i=0;i<size;i++){
 			Order o=orderQueue.poll();		
+			if(o.a instanceof Building){
+				model.order((Building) o.a, o.action);
+			}else{
+				model.order((Unit) o.a, o.action);
+			}
 			this.setChanged();
 		}
 		this.notifyObservers();

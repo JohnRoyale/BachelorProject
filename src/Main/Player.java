@@ -1,21 +1,38 @@
 package Main;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-import Assets.Asset;
+import Assets.*;
 
 public class Player {
 	int playerId;
-	ArrayList<Asset> assets;
-	ArrayList<Asset> lostAssets;
+	public int archerCount,spearmanCount,cavalryCount;
+	public int baseX,baseY;
+	private CopyOnWriteArrayList<Asset> assets;
+	private CopyOnWriteArrayList<Asset> lostAssets;
 	
 	public Player(int playerId) {
 		this.playerId = playerId;
-		assets = new ArrayList<Asset>();
-		lostAssets = new ArrayList<Asset>();
+		archerCount = spearmanCount=cavalryCount=0;
+		assets = new CopyOnWriteArrayList<Asset>();
+		lostAssets = new CopyOnWriteArrayList<Asset>();
 		
 	}
 	
+	public CopyOnWriteArrayList<Asset> getAssets(){
+		return assets;
+	}
 	
+	public void addAsset(Asset a){
+		assets.add(a);
+		if(a instanceof Archer){
+			archerCount++;
+		}else if(a instanceof Spearman){
+			spearmanCount++;
+		}else if(a instanceof Cavalry){
+			cavalryCount++;
+		}
+	}
 
 }

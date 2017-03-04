@@ -52,8 +52,8 @@ public class View extends JPanel implements Observer {
 	private void paintAsset(Graphics g, Asset a,int minDimension,int horOff,int verOff) {
 		int n=model.getLevelMap().size;
 		int radius=(int)Math.floor(a.getDiameter()*minDimension);
-		int x=(int)Math.floor((a.getX()-a.getDiameter()/2-0.5/n)*minDimension);
-		int y=(int)Math.floor((a.getY()-a.getDiameter()/2-0.5/n)*minDimension);
+		int x=(int)Math.floor((a.getX()-a.getDiameter()/2+0.5/n)*minDimension);
+		int y=(int)Math.floor((a.getY()-a.getDiameter()/2+0.5/n)*minDimension);
 		 
 		Color c;
 		
@@ -89,7 +89,7 @@ public class View extends JPanel implements Observer {
 		Color c;
 		for (int x = 0; x < map.size; x++) {
 			for (int y = 0; y < map.size; y++) {
-				tile = map.getTile(y, x);
+				tile = map.getTile(x, y);
 
 				switch (tile) {
 				case '#':
@@ -105,8 +105,7 @@ public class View extends JPanel implements Observer {
 			}
 		}
 		for (Player p: model.getPlayerList()) {
-			for (Asset a : p.assets) {
-				System.out.println(a.getX());
+			for (Asset a : p.getAssets()) {
 				this.paintAsset(g, a,absoluteSquareSize*map.size,horizontalOffset,verticalOffset);
 			}
 		}
