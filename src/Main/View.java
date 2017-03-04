@@ -107,7 +107,7 @@ public class View extends JPanel implements Observer {
 		for (Player p: model.getPlayerList()) {
 			for (Asset a : p.assets) {
 				System.out.println(a.getX());
-				this.paintAsset(g, a,minDimension,horizontalOffset,verticalOffset);
+				this.paintAsset(g, a,absoluteSquareSize*map.size,horizontalOffset,verticalOffset);
 			}
 		}
 
