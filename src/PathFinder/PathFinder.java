@@ -49,6 +49,8 @@ public class PathFinder {
 		queue= new PriorityQueue<State>();
 		State[][] map=new State[m.size][m.size];
 		
+		//System.out.println(x1 +" "+y1 +" " + x2 +" "+y2);
+		
 		//if already on correct tile return 'no move'
 		if(this.heuristic(x1, y1, x2, y2)==0)return 'n';
 		
@@ -84,7 +86,7 @@ public class PathFinder {
 				map[s.x][s.y-1].set(s.direction, s.travelled+1);
 			}
 		}
-		System.out.println(direction);
+		//System.out.println(direction);
 		return direction;
 	}
 	

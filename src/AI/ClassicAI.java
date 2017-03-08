@@ -71,7 +71,7 @@ public class ClassicAI implements AI {
 			
 			//if on same square move directly towards goal
 			if(action == 'n'){
-				if(Math.abs(a.getX()-enemy.baseX/16.0)>Math.abs(a.getX()-enemy.baseY/16.0)){
+				if(Math.abs(a.getX()-enemy.baseX/16.0)>Math.abs(a.getY()-enemy.baseY/16.0)){
 					if(a.getX()-enemy.baseX/16.0<0){
 						action='r';
 					}else{

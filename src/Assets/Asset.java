@@ -74,4 +74,8 @@ public abstract class Asset {
 	public int getOwner() {
 		return owner;
 	}
+
+	public int getHitPoints() {
+		return hitPoints;
+	}
 }

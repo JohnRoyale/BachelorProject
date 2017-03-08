@@ -12,6 +12,10 @@ public class Player {
 	private CopyOnWriteArrayList<Asset> assets;
 	private CopyOnWriteArrayList<Asset> lostAssets;
 	
+	public CopyOnWriteArrayList<Asset> getLostAssets() {
+		return lostAssets;
+	}
+
 	public Player(int playerId) {
 		this.playerId = playerId;
 		archerCount = spearmanCount=cavalryCount=0;

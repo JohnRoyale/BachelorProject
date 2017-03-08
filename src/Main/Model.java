@@ -8,7 +8,7 @@ import Assets.*;
 
 public class Model extends Observable {
 
-	final int populationCap = 11;
+	final int populationCap = 20;
 
 	Map levelMap;
 
@@ -41,30 +41,34 @@ public class Model extends Observable {
 		}
 		
 		
-		playerList.get(1).addAsset(new Building(1, playerList.get(1).baseX / 16.0, playerList.get(1).baseY / 16.0, 10, levelMap.size));
-		playerList.get(2).addAsset(new Building(2, playerList.get(2).baseX / 16.0, playerList.get(2).baseY / 16.0, 10, levelMap.size));
+		playerList.get(1).addAsset(new Building(1, playerList.get(1).baseX / (float)levelMap.size, playerList.get(1).baseY / (float)levelMap.size, 10, levelMap.size));
+		playerList.get(2).addAsset(new Building(2, playerList.get(2).baseX / (float)levelMap.size, playerList.get(2).baseY / (float)levelMap.size, 10, levelMap.size));
 	}
 
 	public void order(Unit u, char action) {
 		// moves unit to new position
 		switch (action) {
 		case ('u'): {
-			if (!notAccessable(u.getX(), u.getY() - 0.1 / levelMap.size, u))
+			if (!notAccessable(u.getX(), u.getY() - 0.1 / levelMap.size, u) &&
+					!notAccessable(u.getX()+u.getDiameter(), u.getY() - 0.1 / levelMap.size, u))
 				u.setCoordinates(u.getX(), u.getY() - 0.05 / levelMap.size);
 			break;
 		}
 		case ('d'): {
-			if (!notAccessable(u.getX(), u.getY() + 0.1 / levelMap.size, u))
+			if (!notAccessable(u.getX(), u.getY() +u.getDiameter() + 0.1 / levelMap.size, u) &&
+					!notAccessable(u.getX()+u.getDiameter(), u.getY() +u.getDiameter() + 0.1 / levelMap.size, u))
 				u.setCoordinates(u.getX(), u.getY() + 0.05 / levelMap.size);
 			break;
 		}
 		case ('l'): {
-			if (!notAccessable(u.getX() - 0.1 / levelMap.size, u.getY(), u))
+			if (!notAccessable(u.getX()  - 0.1 / levelMap.size, u.getY(), u)&&
+					!notAccessable(u.getX()  - 0.1 / levelMap.size, u.getY()+u.getDiameter(), u))
 				u.setCoordinates(u.getX() - 0.05 / levelMap.size, u.getY());
 			break;
 		}
 		case ('r'): {
-			if (!notAccessable(u.getX() + 0.1 / levelMap.size, u.getY(), u))
+			if (!notAccessable(u.getX() +u.getDiameter() + 0.1 / levelMap.size, u.getY(), u)&&
+					!notAccessable(u.getX() +u.getDiameter()  + 0.1 / levelMap.size, u.getY()+u.getDiameter(), u))
 				u.setCoordinates(u.getX() + 0.05 / levelMap.size, u.getY());
 			break;
 		}
@@ -119,12 +123,16 @@ public class Model extends Observable {
 
 	public void checkCollisions(Unit u) {
 		for (Player p : playerList) {
-			if (p.playerId == u.getOwner()) {
-				continue;
-			} else {
+			if (p.playerId != u.getOwner()) {
 				for (Asset a : p.getAssets()) {
-					if (u.collides(a))
+					if (u.collides(a)){
+						System.out.println("Attacking");
 						a.damage(u.getAttackPower());
+						if(a.getHitPoints()<=0){
+							p.getLostAssets().add(a);
+							p.getAssets().remove(a);
+						}
+					}
 				}
 			}
 		}

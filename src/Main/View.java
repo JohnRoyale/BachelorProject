@@ -52,8 +52,8 @@ public class View extends JPanel implements Observer {
 	private void paintAsset(Graphics g, Asset a,int minDimension,int horOff,int verOff) {
 		int n=model.getLevelMap().size;
 		int radius=(int)Math.floor(a.getDiameter()*minDimension);
-		int x=(int)Math.floor((a.getX()-a.getDiameter()/2+0.5/n)*minDimension);
-		int y=(int)Math.floor((a.getY()-a.getDiameter()/2+0.5/n)*minDimension);
+		int x=(int)Math.floor((a.getX())*minDimension);
+		int y=(int)Math.floor((a.getY())*minDimension);
 		 
 		Color c;
 		
