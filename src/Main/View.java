@@ -59,14 +59,14 @@ public class View extends JPanel implements Observer {
 		
 		if (a instanceof Unit) {
 			if(a instanceof Archer){
-				c=Color.GREEN;
+				c=Color.GREEN; 		//change to triangle
 			}else if(a instanceof Cavalry){
-				c=Color.YELLOW;
+				c=Color.YELLOW; 	//change to diamond
 			}else{
-				c=Color.RED;
+				c=Color.RED;		//keep circle
 			}
 		} else {
-			c=Color.blue;
+			c=Color.blue;			//change to square
 		}
 		
 		g.setColor(c);

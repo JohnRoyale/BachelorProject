@@ -5,5 +5,11 @@ public class Cavalry extends Unit{
 	
 	public Cavalry(int owner, double x, double y,int mapSize) {
 		super(owner, x, y, 6, 4, 4,mapSize);
+		type = 'c';
+		counter = 'a';
+	}
+	
+	public String toString() {
+		return "Cavalry" + owner;
 	}
 }

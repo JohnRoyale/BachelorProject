@@ -8,12 +8,12 @@ import Assets.*;
 
 public class Model extends Observable {
 
-	final int populationCap = 20;
+	final int populationCap = 5;
 
 	Map levelMap;
 
 	private ArrayList<Player> playerList;
-
+	double mapSize;
 	boolean gameOver = false;
 
 	public Model(String fileName) {
@@ -27,6 +27,7 @@ public class Model extends Observable {
 		playerList.add(new Player(1)); // player 1
 		playerList.add(new Player(2)); // player 2
 		
+		mapSize = (double)levelMap.size;
 		
 		for(int x=0;x<levelMap.size;x++){
 			for(int y=0;y<levelMap.size;y++){
@@ -126,7 +127,7 @@ public class Model extends Observable {
 			if (p.playerId != u.getOwner()) {
 				for (Asset a : p.getAssets()) {
 					if (u.collides(a)){
-						System.out.println("Attacking");
+						System.out.println(u.toString() + " Attacking " + a.toString());
 						a.damage(u.getAttackPower());
 						if(a.getHitPoints()<=0){
 							p.getLostAssets().add(a);
@@ -149,6 +150,10 @@ public class Model extends Observable {
 
 	public Map getLevelMap() {
 		return levelMap;
+	}
+	
+	public double getMapSize() {
+		return mapSize;
 	}
 
 	public ArrayList<Player> getPlayerList() {

@@ -30,5 +30,8 @@ public class Building extends Asset {
 		this.inProduction = inProduction;
 	}
 	
+	public String toString() {
+		return "Building" + owner;
+	}
 	
 }

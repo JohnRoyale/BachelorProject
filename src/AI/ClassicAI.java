@@ -11,6 +11,7 @@ import Assets.Asset;
 import Assets.Building;
 import Assets.Cavalry;
 import Assets.Spearman;
+import Assets.Unit;
 import Main.Model;
 import Main.Order;
 import Main.Player;
@@ -22,7 +23,7 @@ public class ClassicAI implements AI {
 	int playerID;
 	Player enemy,self;
 	ConcurrentLinkedQueue<Order> orderQueue;
-	PathFinder p;
+	PathFinder p, t;
 	List<Character> actions = Arrays.asList('u', 'd', 'l', 'r', 'n');
 	List<Character> production = Arrays.asList('n', 's', 'a', 'c');
 
@@ -31,13 +32,13 @@ public class ClassicAI implements AI {
 		this.orderQueue = orderQueue;
 		model = m;
 		p=new PathFinder();
+		t=new PathFinder();
 	}
-	
 	
 
 	@Override
 	public void determineAction(Asset a) {
-		Random random = new Random();
+		//Random random = new Random();
 		char action = 'n';
 		
 		
@@ -59,31 +60,66 @@ public class ClassicAI implements AI {
 					b.setInProduction('c');
 					b.setProductionTimer(Cavalry.buildtime);
 				} else {
-					b.setInProduction('c');
-					b.setProductionTimer(Cavalry.buildtime);
+					b.setInProduction('s');
+					b.setProductionTimer(Spearman.buildtime);
 				}
 				
 			}
-		} else {
+		} else if(a instanceof Unit){
+			Unit b = (Unit)a;
 			int x = (int) (a.getX() * (model.getLevelMap().size));
 			int y = (int) (a.getY() * (model.getLevelMap().size));
-			action = p.findPath(x, y, enemy.baseX, enemy.baseY, model.getLevelMap());
 			
-			//if on same square move directly towards goal
+			//unit position
+			double unitX = a.getX()/model.getMapSize();
+			double unitY = a.getY()/model.getMapSize();
+			
+//			System.out.println("x="+ x + " y=" + y);
+//			System.out.println("x double=" + a.getX() + " y double=" + a.getY());
+//			System.out.println("x double=" + unitX + " y double=" + unitY);
+			
+			//initial target
+			double targetX = enemy.baseX/model.getMapSize();
+			double targetY = enemy.baseY/model.getMapSize();
+			action = p.findPath(x, y, (int)enemy.baseX, (int)enemy.baseY, model.getLevelMap());
+			
+			//if close enemy assets that can be countered by unit
+			double distance = 2.0/model.getMapSize();
+			int cnt = 0;
+			for(Asset enemyAsset: enemy.getAssets()) {
+				if(enemyAsset instanceof Unit) {
+					Unit e = (Unit)enemyAsset;	
+					double interceptDistance = Math.abs(e.getX()-a.getX())+Math.abs(e.getY()-a.getY()); //check if in range
+					if(distance >= interceptDistance && e.getType() == b.getCounter()) {				
+						cnt++;
+						if(cnt == 1) { 
+							//first enemy that can be countered -> new target location 
+							targetX = e.getX()/model.getMapSize();
+							targetY = e.getY()/model.getMapSize();
+							action = 'n';
+							System.out.println("New target");
+						}
+					}
+				}
+			}
+			
+			//if on same square move directly towards target
 			if(action == 'n'){
-				if(Math.abs(a.getX()-enemy.baseX/16.0)>Math.abs(a.getY()-enemy.baseY/16.0)){
-					if(a.getX()-enemy.baseX/16.0<0){
+				if(Math.abs(unitX-targetX)>Math.abs(unitY-targetY)){
+					//System.out.println(unitX-targetX);
+					if(unitX-targetX<0){
 						action='r';
 					}else{
 						action='l';
 					}
 				}else{
-					if(a.getY()-enemy.baseY/16.0<0){
+					if(unitY-targetY<0){
 						action='d';
 					}else{
 						action='u';
 					}
 				}
+				
 			}
 			
 		}

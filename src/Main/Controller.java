@@ -24,7 +24,7 @@ public class Controller extends Observable{
 		model=new Model("map1");
 		model.levelMap.printMap();
 		orderQueue=new ConcurrentLinkedQueue<Order>();
-		player1=new RandomAI(orderQueue,model,1);
+		player1=new ClassicAI(orderQueue,model,1);
 		player2=new ClassicAI(orderQueue,model,2);
 		
 		
