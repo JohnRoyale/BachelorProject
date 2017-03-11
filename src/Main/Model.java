@@ -48,29 +48,30 @@ public class Model extends Observable {
 
 	public void order(Unit u, char action) {
 		// moves unit to new position
+		double movement=u.getSpeed()*0.05/levelMap.size;
 		switch (action) {
 		case ('u'): {
-			if (!notAccessable(u.getX(), u.getY() - 0.1 / levelMap.size, u) &&
-					!notAccessable(u.getX()+u.getDiameter(), u.getY() - 0.1 / levelMap.size, u))
-				u.setCoordinates(u.getX(), u.getY() - 0.05 / levelMap.size);
+			if (!notAccessable(u.getX(), u.getY() - movement, u) &&
+					!notAccessable(u.getX()+u.getDiameter(), u.getY() - movement, u))
+				u.setCoordinates(u.getX(), u.getY() - movement);
 			break;
 		}
 		case ('d'): {
-			if (!notAccessable(u.getX(), u.getY() +u.getDiameter() + 0.1 / levelMap.size, u) &&
-					!notAccessable(u.getX()+u.getDiameter(), u.getY() +u.getDiameter() + 0.1 / levelMap.size, u))
-				u.setCoordinates(u.getX(), u.getY() + 0.05 / levelMap.size);
+			if (!notAccessable(u.getX(), u.getY() +u.getDiameter() + movement, u) &&
+					!notAccessable(u.getX()+u.getDiameter(), u.getY() +u.getDiameter() + movement, u))
+				u.setCoordinates(u.getX(), u.getY() + movement);
 			break;
 		}
 		case ('l'): {
-			if (!notAccessable(u.getX()  - 0.1 / levelMap.size, u.getY(), u)&&
-					!notAccessable(u.getX()  - 0.1 / levelMap.size, u.getY()+u.getDiameter(), u))
-				u.setCoordinates(u.getX() - 0.05 / levelMap.size, u.getY());
+			if (!notAccessable(u.getX()  - movement, u.getY(), u)&&
+					!notAccessable(u.getX()  - movement, u.getY()+u.getDiameter(), u))
+				u.setCoordinates(u.getX() - movement, u.getY());
 			break;
 		}
 		case ('r'): {
-			if (!notAccessable(u.getX() +u.getDiameter() + 0.1 / levelMap.size, u.getY(), u)&&
-					!notAccessable(u.getX() +u.getDiameter()  + 0.1 / levelMap.size, u.getY()+u.getDiameter(), u))
-				u.setCoordinates(u.getX() + 0.05 / levelMap.size, u.getY());
+			if (!notAccessable(u.getX() +u.getDiameter() + movement, u.getY(), u)&&
+					!notAccessable(u.getX() +u.getDiameter()  + movement, u.getY()+u.getDiameter(), u))
+				u.setCoordinates(u.getX() + movement, u.getY());
 			break;
 		}
 		// case('n'): System.out.println("none");
@@ -127,7 +128,7 @@ public class Model extends Observable {
 			if (p.playerId != u.getOwner()) {
 				for (Asset a : p.getAssets()) {
 					if (u.collides(a)){
-						System.out.println(u.toString() + " Attacking " + a.toString());
+						//System.out.println(u.toString() + " Attacking " + a.toString());
 						a.damage(u.getAttackPower());
 						if(a.getHitPoints()<=0){
 							p.getLostAssets().add(a);

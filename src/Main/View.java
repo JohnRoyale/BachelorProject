@@ -52,25 +52,46 @@ public class View extends JPanel implements Observer {
 	private void paintAsset(Graphics g, Asset a,int minDimension,int horOff,int verOff) {
 		int n=model.getLevelMap().size;
 		int radius=(int)Math.floor(a.getDiameter()*minDimension);
-		int x=(int)Math.floor((a.getX())*minDimension);
-		int y=(int)Math.floor((a.getY())*minDimension);
+		int x=(int)Math.floor((a.getX())*minDimension)+horOff/2;
+		int y=(int)Math.floor((a.getY())*minDimension)+verOff/2;
 		 
 		Color c;
 		
+		switch (a.getOwner()) {
+		case 0: c=Color.GRAY;
+				break;
+        case 1: c=Color.RED;
+				break;
+        case 2: c=Color.BLUE;
+				break;
+        case 3: c=Color.GREEN;
+        		break;
+        case 4: c=Color.MAGENTA;
+		default:c=Color.YELLOW;
+		}
+		g.setColor(c);
+		
 		if (a instanceof Unit) {
 			if(a instanceof Archer){
-				c=Color.GREEN; 		//change to triangle
+				g.fillPolygon(new int[]{x,x+radius,x+radius/2}, new int[]{y,y,y+radius}, 3);
+				g.setColor(Color.BLACK);
+				g.drawPolygon(new int[]{x,x+radius,x+radius/2}, new int[]{y,y,y+radius}, 3);
 			}else if(a instanceof Cavalry){
-				c=Color.YELLOW; 	//change to diamond
+				g.fillPolygon(new int[]{x+radius/2,x+radius,x+radius/2,x}, new int[]{y,y+radius/2,y+radius,y+radius/2}, 4);
+				g.setColor(Color.BLACK);
+				g.drawPolygon(new int[]{x+radius/2,x+radius,x+radius/2,x}, new int[]{y,y+radius/2,y+radius,y+radius/2}, 4);
 			}else{
-				c=Color.RED;		//keep circle
+				g.fillOval(x, y, radius, radius);
+				g.setColor(Color.BLACK);
+				g.drawOval(x, y, radius, radius);
 			}
 		} else {
-			c=Color.blue;			//change to square
+			g.fillRect(x, y, radius, radius);
+			g.setColor(Color.BLACK);
+			g.drawRect(x, y, radius, radius);
 		}
 		
-		g.setColor(c);
-		g.fillOval(x+horOff/2, y+verOff/2, radius, radius);
+		
 		
 	}
 

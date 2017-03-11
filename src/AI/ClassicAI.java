@@ -81,7 +81,7 @@ public class ClassicAI implements AI {
 			//initial target
 			double targetX = enemy.baseX/model.getMapSize();
 			double targetY = enemy.baseY/model.getMapSize();
-			action = p.findPath(x, y, (int)enemy.baseX, (int)enemy.baseY, model.getLevelMap());
+			action = p.findPath(a.getX(), a.getY(), enemy.baseX/model.getMapSize(), enemy.baseY/model.getMapSize(),a.getDiameter(), model.getLevelMap());
 			
 			//if close enemy assets that can be countered by unit
 			double distance = 2.0/model.getMapSize();
@@ -97,7 +97,7 @@ public class ClassicAI implements AI {
 							targetX = e.getX()/model.getMapSize();
 							targetY = e.getY()/model.getMapSize();
 							action = 'n';
-							System.out.println("New target");
+							//System.out.println("New target");
 						}
 					}
 				}

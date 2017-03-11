@@ -43,35 +43,56 @@ public class PathFinder {
 		}
 	}
 	
-	public char findPath(int x1,int y1,int x2,int y2, Map m){
+	public char findPath(double x1,double y1,double x2,double y2,double diameter, Map m){
 		this.m=m;
 		char direction='n';
 		queue= new PriorityQueue<State>();
 		State[][] map=new State[m.size][m.size];
 		
-		//System.out.println(x1 +" "+y1 +" " + x2 +" "+y2);
+		int startX=(int)(x1*m.size);
+		int startY=(int)(y1*m.size);
+		int goalX=(int)(x2*m.size);
+		int goalY=(int)(y2*m.size);
+		
+		//System.out.println(startX +" "+startY +" " + goalX +" "+goalY);
 		
 		//if already on correct tile return 'no move'
-		if(this.heuristic(x1, y1, x2, y2)==0)return 'n';
+		if(this.heuristic(startX, startY, goalX, goalY)==0){
+			if(Math.abs(x1-x2)>Math.abs(y1-y2)){
+				//System.out.println(unitX-targetX);
+				if(x1-x2<0){
+					return 'r';
+				}else{
+					return 'l';
+				}
+			}else{
+				if(y1-y2<0){
+					return 'd';
+				}else{
+					return 'u';
+				}
+			}
+		}
 		
 		for(int i=0;i<m.size;i++){
 			for(int j=0;j<m.size;j++){
-				map[i][j]=new State(i,j,'n',1000*m.size,this.heuristic(i, j, x2, y2));
+				map[i][j]=new State(i,j,'n',1000*m.size,this.heuristic(i, j, goalX, goalY));
 			}
 		}
-		if(y1>0)map[x1][y1-1].set('u', 1);
-		if(x1<m.size-1)map[x1+1][y1].set('r', 1);
-		if(x1>0)map[x1-1][y1].set('l', 1);
-		if(y1<m.size-1)map[x1][y1+1].set('d', 1);
+		if(startY>0)map[startX][startY-1].set('u', 1);
+		if(startX<m.size-1)map[startX+1][startY].set('r', 1);
+		if(startX>0)map[startX-1][startY].set('l', 1);
+		if(startY<m.size-1)map[startX][startY+1].set('d', 1);
 		
 		State s;
 		while(queue.size()>0){
 			
 			s = queue.poll();
 			//System.out.println(s.x +" "+s.y+" "+x2+" "+y2+" "+s.travelled+" "+queue.size()+" "+s.direction);
-			if(s.x==x2 && s.y==y2){
+			if(s.x==goalX && s.y==goalY){
 				//System.out.println(s.direction);
-				return s.direction;
+				direction=s.direction;
+				continue;
 			}
 			if(s.x<m.size){
 				map[s.x+1][s.y].set(s.direction, s.travelled+1);
@@ -87,6 +108,19 @@ public class PathFinder {
 			}
 		}
 		//System.out.println(direction);
+		
+		//System.out.print(direction);
+		if(direction == 'd' || direction == 'u'){
+			if(startX != (int)((x1+diameter)*m.size)){
+				direction = 'l';
+			}
+		}else{
+			if(startY != (int)((y1+diameter)*m.size)){
+				direction = 'u';
+			}
+		}
+		//System.out.println(direction);
+		
 		return direction;
 	}
 	
