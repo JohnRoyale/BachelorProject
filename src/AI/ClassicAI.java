@@ -81,8 +81,7 @@ public class ClassicAI implements AI {
 			//initial target
 			double targetX = enemy.baseX/model.getMapSize();
 			double targetY = enemy.baseY/model.getMapSize();
-			action = p.findPath(a.getX(), a.getY(), enemy.baseX/model.getMapSize(), enemy.baseY/model.getMapSize(),a.getDiameter(), model.getLevelMap());
-			
+
 			//if close enemy assets that can be countered by unit
 			double distance = 2.0/model.getMapSize();
 			int cnt = 0;
@@ -94,8 +93,8 @@ public class ClassicAI implements AI {
 						cnt++;
 						if(cnt == 1) { 
 							//first enemy that can be countered -> new target location 
-							targetX = e.getX()/model.getMapSize();
-							targetY = e.getY()/model.getMapSize();
+							targetX=e.getX();
+							targetY=e.getY();
 							action = 'n';
 							//System.out.println("New target");
 						}
@@ -104,23 +103,9 @@ public class ClassicAI implements AI {
 			}
 			
 			//if on same square move directly towards target
-			if(action == 'n'){
-				if(Math.abs(unitX-targetX)>Math.abs(unitY-targetY)){
-					//System.out.println(unitX-targetX);
-					if(unitX-targetX<0){
-						action='r';
-					}else{
-						action='l';
-					}
-				}else{
-					if(unitY-targetY<0){
-						action='d';
-					}else{
-						action='u';
-					}
-				}
-				
-			}
+			
+			action=p.findPath(a.getX(), a.getY(), targetX, targetY, a.getDiameter(), model.getLevelMap());
+			
 			
 		}
 		a.setIdle(false);

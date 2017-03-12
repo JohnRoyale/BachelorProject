@@ -8,7 +8,7 @@ import Assets.*;
 
 public class Model extends Observable {
 
-	final int populationCap = 5;
+	final int populationCap = 100;
 
 	Map levelMap;
 
@@ -129,7 +129,13 @@ public class Model extends Observable {
 				for (Asset a : p.getAssets()) {
 					if (u.collides(a)){
 						//System.out.println(u.toString() + " Attacking " + a.toString());
-						a.damage(u.getAttackPower());
+						int damage=u.getAttackPower();
+						
+						if(a instanceof Unit && ((Unit) a).getType()==u.getCounter()){
+							damage =(int)Math.round(damage * 1.5);
+						}
+						
+						a.damage(damage);
 						if(a.getHitPoints()<=0){
 							p.getLostAssets().add(a);
 							p.getAssets().remove(a);
