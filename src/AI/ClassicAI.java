@@ -67,16 +67,6 @@ public class ClassicAI implements AI {
 			}
 		} else if(a instanceof Unit){
 			Unit b = (Unit)a;
-			int x = (int) (a.getX() * (model.getLevelMap().size));
-			int y = (int) (a.getY() * (model.getLevelMap().size));
-			
-			//unit position
-			double unitX = a.getX()/model.getMapSize();
-			double unitY = a.getY()/model.getMapSize();
-			
-//			System.out.println("x="+ x + " y=" + y);
-//			System.out.println("x double=" + a.getX() + " y double=" + a.getY());
-//			System.out.println("x double=" + unitX + " y double=" + unitY);
 			
 			//initial target
 			double targetX = enemy.baseX/model.getMapSize();
@@ -102,8 +92,7 @@ public class ClassicAI implements AI {
 				}
 			}
 			
-			//if on same square move directly towards target
-			
+			//if on same square move directly towards target			
 			action=p.findPath(a.getX(), a.getY(), targetX, targetY, a.getDiameter(), model.getLevelMap());
 			
 			

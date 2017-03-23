@@ -21,7 +21,7 @@ public class Controller extends Observable{
 	private View view;
 	
 	public Controller() {
-		model=new Model("map1");
+		model=new Model("map2");
 		model.levelMap.printMap();
 		orderQueue=new ConcurrentLinkedQueue<Order>();
 		player1=new ClassicAI(orderQueue,model,1);
