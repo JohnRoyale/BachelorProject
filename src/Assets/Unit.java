@@ -46,4 +46,32 @@ public abstract class Unit extends Asset {
 	public void setState(String state) {
 		this.state = state;
 	}
+	
+	public char determineAction() {
+		char a = 'n';
+
+		switch (state) {
+		//Patrol around base
+		case "defendBase":
+			//Move randomly around base, if enemy comes in range (within x tiles) target enemy
+			break;
+		//Attack enemy through route with most resistance
+		case "defensiveInvade":
+			//Find a short path with most resistance
+			break;
+		//Attack enemy through route with least resistance
+		case "evasiveInvade":
+			//Find a short path with least resistance to enemy
+			break;
+		//Attack closest enemy unit, maybe make it only attack its preferred enemy.
+		case "hunt":
+			//find closest enemy
+			//find action for shortest path
+			
+			break;
+		}
+
+		return a;
+	}
+
 }

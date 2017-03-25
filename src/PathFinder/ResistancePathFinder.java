@@ -67,6 +67,7 @@ public class ResistancePathFinder {
 
 	public char findPath(double x1, double y1, double x2, double y2, double diameter, Map m, Model model, int p,
 			boolean evade) {
+		long ctime=System.currentTimeMillis();
 		this.m = m;
 		this.evade = evade;
 		char direction = 'n';
@@ -170,7 +171,6 @@ public class ResistancePathFinder {
 				direction = 'u';
 			}
 		}
-
 		return direction;
 	}
 
