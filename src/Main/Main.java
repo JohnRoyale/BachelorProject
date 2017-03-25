@@ -8,7 +8,7 @@ public class Main {
 		
 		Controller controller=new Controller();
 		long ctime=System.currentTimeMillis();
-		while(true){
+		while(!controller.gameOver()){
 			if(System.currentTimeMillis()-ctime>20){
 				ctime=System.currentTimeMillis();
 				controller.update();

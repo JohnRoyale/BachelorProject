@@ -4,7 +4,7 @@ import java.util.PriorityQueue;
 
 import Main.Map;
 
-public class PathFinder {
+public class ShortestPathFinder {
 	
 	class State implements Comparable<State>{
 		int x,y;

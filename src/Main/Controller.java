@@ -74,4 +74,8 @@ public class Controller extends Observable{
 		this.notifyObservers();
 		
 	}
+
+	public boolean gameOver() {
+		return model.gameOver();
+	}
 }

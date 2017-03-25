@@ -26,51 +26,52 @@ public class Model extends Observable {
 		playerList.add(new Player(0)); // nature
 		playerList.add(new Player(1)); // player 1
 		playerList.add(new Player(2)); // player 2
-		
-		mapSize = (double)levelMap.size;
-		
-		for(int x=0;x<levelMap.size;x++){
-			for(int y=0;y<levelMap.size;y++){
-				if(levelMap.getTile(y, x)=='1'){
-					playerList.get(1).baseX=x;
-					playerList.get(1).baseY=y;
-				} else if(levelMap.getTile(y, x)=='2'){
-					playerList.get(2).baseX=x;
-					playerList.get(2).baseY=y;
+
+		mapSize = (double) levelMap.size;
+
+		for (int x = 0; x < levelMap.size; x++) {
+			for (int y = 0; y < levelMap.size; y++) {
+				if (levelMap.getTile(y, x) == '1') {
+					playerList.get(1).baseX = x;
+					playerList.get(1).baseY = y;
+				} else if (levelMap.getTile(y, x) == '2') {
+					playerList.get(2).baseX = x;
+					playerList.get(2).baseY = y;
 				}
 			}
 		}
-		
-		
-		playerList.get(1).addAsset(new Building(1, playerList.get(1).baseX / (float)levelMap.size, playerList.get(1).baseY / (float)levelMap.size, 10, levelMap.size));
-		playerList.get(2).addAsset(new Building(2, playerList.get(2).baseX / (float)levelMap.size, playerList.get(2).baseY / (float)levelMap.size, 10, levelMap.size));
+
+		playerList.get(1).addAsset(new Building(1, playerList.get(1).baseX / (float) levelMap.size,
+				playerList.get(1).baseY / (float) levelMap.size, 10, levelMap.size));
+		playerList.get(2).addAsset(new Building(2, playerList.get(2).baseX / (float) levelMap.size,
+				playerList.get(2).baseY / (float) levelMap.size, 10, levelMap.size));
 	}
 
 	public void order(Unit u, char action) {
 		// moves unit to new position
-		double movement=u.getSpeed()*0.05/levelMap.size;
+		double movement = u.getSpeed() * 0.05 / levelMap.size;
 		switch (action) {
 		case ('u'): {
-			if (!notAccessable(u.getX(), u.getY() - movement, u) &&
-					!notAccessable(u.getX()+u.getDiameter(), u.getY() - movement, u))
+			if (!notAccessable(u.getX(), u.getY() - movement, u)
+					&& !notAccessable(u.getX() + u.getDiameter(), u.getY() - movement, u))
 				u.setCoordinates(u.getX(), u.getY() - movement);
 			break;
 		}
 		case ('d'): {
-			if (!notAccessable(u.getX(), u.getY() +u.getDiameter() + movement, u) &&
-					!notAccessable(u.getX()+u.getDiameter(), u.getY() +u.getDiameter() + movement, u))
+			if (!notAccessable(u.getX(), u.getY() + u.getDiameter() + movement, u)
+					&& !notAccessable(u.getX() + u.getDiameter(), u.getY() + u.getDiameter() + movement, u))
 				u.setCoordinates(u.getX(), u.getY() + movement);
 			break;
 		}
 		case ('l'): {
-			if (!notAccessable(u.getX()  - movement, u.getY(), u)&&
-					!notAccessable(u.getX()  - movement, u.getY()+u.getDiameter(), u))
+			if (!notAccessable(u.getX() - movement, u.getY(), u)
+					&& !notAccessable(u.getX() - movement, u.getY() + u.getDiameter(), u))
 				u.setCoordinates(u.getX() - movement, u.getY());
 			break;
 		}
 		case ('r'): {
-			if (!notAccessable(u.getX() +u.getDiameter() + movement, u.getY(), u)&&
-					!notAccessable(u.getX() +u.getDiameter()  + movement, u.getY()+u.getDiameter(), u))
+			if (!notAccessable(u.getX() + u.getDiameter() + movement, u.getY(), u)
+					&& !notAccessable(u.getX() + u.getDiameter() + movement, u.getY() + u.getDiameter(), u))
 				u.setCoordinates(u.getX() + movement, u.getY());
 			break;
 		}
@@ -127,16 +128,20 @@ public class Model extends Observable {
 		for (Player p : playerList) {
 			if (p.playerId != u.getOwner()) {
 				for (Asset a : p.getAssets()) {
-					if (u.collides(a)){
-						//System.out.println(u.toString() + " Attacking " + a.toString());
-						int damage=u.getAttackPower();
-						
-						if(a instanceof Unit && ((Unit) a).getType()==u.getCounter()){
-							damage =(int)Math.round(damage * 1.5);
+					if (u.collides(a)) {
+						// System.out.println(u.toString() + " Attacking " +
+						// a.toString());
+						int damage = u.getAttackPower();
+
+						if (a instanceof Unit && ((Unit) a).getType() == u.getCounter()) {
+							damage = (int) Math.round(damage * 1.5);
 						}
-						
+
 						a.damage(damage);
-						if(a.getHitPoints()<=0){
+						if (a.getHitPoints() <= 0) {
+							if(a instanceof Building){
+								gameOver=true;
+							}
 							p.getLostAssets().add(a);
 							p.getAssets().remove(a);
 						}
@@ -144,6 +149,25 @@ public class Model extends Observable {
 				}
 			}
 		}
+	}
+
+	public int getTileResistance(int playerID, int x, int y) {
+		int resistance = 0;
+
+		for (Player p : playerList) {
+
+			for (Asset a : p.getAssets()) {
+				if ((int) (a.getX() * mapSize) == x && (int) (a.getY() * mapSize) == y) {
+					if (p.playerId != playerID) {
+						resistance++;
+					}else{
+						resistance--;
+					}
+				}
+			}
+		}
+
+		return resistance;
 	}
 
 	public void updateAll() {
@@ -158,7 +182,7 @@ public class Model extends Observable {
 	public Map getLevelMap() {
 		return levelMap;
 	}
-	
+
 	public double getMapSize() {
 		return mapSize;
 	}
