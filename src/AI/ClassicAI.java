@@ -32,7 +32,7 @@ public class ClassicAI implements AI {
 		this.orderQueue = orderQueue;
 		model = m;
 		// p=new ShortestPathFinder();
-		p = new ResistancePathFinder();
+		p = new ResistancePathFinder(m);
 	}
 
 	@Override
@@ -93,11 +93,11 @@ public class ClassicAI implements AI {
 			
 			if (b.getType()=='c' && enemy.archerCount==0) {
 				// if on same square move directly towards target choose path with least enemies
-				action = p.findPath(a.getX(), a.getY(), targetX, targetY, a.getDiameter(), model.getLevelMap(), model,
+				action = p.findPath(a.getX(), a.getY(), targetX, targetY, a.getDiameter(),
 						playerID, true);
 			} else {
 				// if on same square move directly towards target choose path with most enemies
-				action = p.findPath(a.getX(), a.getY(), targetX, targetY, a.getDiameter(), model.getLevelMap(), model,
+				action = p.findPath(a.getX(), a.getY(), targetX, targetY, a.getDiameter(),
 						playerID, false);
 			}
 

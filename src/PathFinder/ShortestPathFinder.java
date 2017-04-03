@@ -37,13 +37,18 @@ public class ShortestPathFinder {
 	
 	private PriorityQueue<State> queue;
 	private Map m;
+	
+	public ShortestPathFinder(Map levelMap) {
+		m=levelMap;
+	}
+
 	private void addState(State s){
 		if(m.getTile(s.x, s.y)!= '#'){
 			queue.offer(s);
 		}
 	}
 	
-	public char findPath(double x1,double y1,double x2,double y2,double diameter, Map m){
+	public char findPath(double x1,double y1,double x2,double y2,double diameter){
 		this.m=m;
 		char direction='n';
 		queue= new PriorityQueue<State>();

@@ -139,6 +139,9 @@ public class Model extends Observable {
 
 						a.damage(damage);
 						if (a.getHitPoints() <= 0) {
+							
+							if(u.getState().equals("hunt"))u.setState("idle");
+							
 							if(a instanceof Building){
 								gameOver=true;
 							}
