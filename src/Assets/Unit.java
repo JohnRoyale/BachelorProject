@@ -69,7 +69,7 @@ public abstract class Unit extends Asset {
 		Player e = m.getPlayerList().get(enemy);
 		p = m.getPlayerList().get(this.owner);
 		double mapSize = m.getMapSize();
-		System.out.print(state +" ");
+		//System.out.print(state +" ");
 		
 	
 		while(p.baseX/(double)mapSize+offsetX<0 || p.baseX/(double)mapSize+offsetX>1){
@@ -79,16 +79,11 @@ public abstract class Unit extends Asset {
 			offsetY=random.nextDouble()*6/mapSize-1.0*3/mapSize;
 		}
 		
-		
-		
-		
-		
-		
 		switch (state) {
 		// Patrol around base
 		case "defendBase":
 			if (Math.abs(this.xCor * mapSize- p.baseX)+Math.abs(this.yCor * mapSize - p.baseY) > 5) {
-				System.out.println("walk back ");
+				//System.out.println("walk back ");
 				a = rp.findPath(this.xCor, this.yCor, p.baseX / mapSize, p.baseY / mapSize, this.getDiameter(),
 						this.owner, false);
 			} else {
@@ -102,11 +97,11 @@ public abstract class Unit extends Asset {
 					}
 				}
 				if(target != null && minDist*m.getMapSize()<5){
-					System.out.println("Enemy Close");
+					//System.out.println("Enemy Close");
 					a = sp.findPath(this.xCor, this.yCor, target.getX(), target.getY(), this.getDiameter());
 					turnCount=0;
 				}else{
-					System.out.println("patrolling");
+					//System.out.println("patrolling");
 					a = sp.findPath(this.xCor, this.yCor, p.baseX / mapSize+offsetX, p.baseY / mapSize+offsetY, this.getDiameter());
 					
 					//a=actions.get(random.nextInt(actions.size()));
@@ -137,7 +132,7 @@ public abstract class Unit extends Asset {
 			// find closest enemy
 			// find action for shortest path
 			
-			double minDist=3;
+			double minDist=5;
 			Asset target=null;
 			for (Asset enemyAsset : e.getAssets()) {
 				double dist=Math.abs(enemyAsset.getX()-this.xCor)+Math.abs(enemyAsset.getY()-this.yCor);

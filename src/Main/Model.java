@@ -158,7 +158,6 @@ public class Model extends Observable {
 		int resistance = 0;
 
 		for (Player p : playerList) {
-
 			for (Asset a : p.getAssets()) {
 				if ((int) (a.getX() * mapSize) == x && (int) (a.getY() * mapSize) == y) {
 					if (p.playerId != playerID) {
