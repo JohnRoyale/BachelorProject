@@ -10,7 +10,7 @@ public class ResistancePathFinder {
 	class State implements Comparable<State> {
 		int x, y;
 		int travelled;
-		int resistance;
+		double resistance;
 		int heuristic;
 		int total;
 		char direction;
@@ -25,10 +25,10 @@ public class ResistancePathFinder {
 			total = heuristic + travelled;
 		}
 
-		public void set(char direction, int travelled, int resistance) {
+		public void set(char direction, int travelled, double d) {
 			// System.out.println(resistance);
 			if (travelled < this.travelled) {
-				this.resistance = resistance;
+				this.resistance = d;
 				this.direction = direction;
 				this.travelled = travelled;
 				total = heuristic + travelled;
@@ -47,9 +47,19 @@ public class ResistancePathFinder {
 					return -1;
 			}
 			if (evade) {
-				return this.resistance - s.resistance;
+				if(this.resistance>s.resistance){
+					return 1;
+				}else if(this.resistance<s.resistance){
+					return -1;
+				}
+				return 0;
 			} else {
-				return s.resistance - this.resistance;
+				if(s.resistance>this.resistance){
+					return 1;
+				}else if(s.resistance<this.resistance){
+					return -1;
+				}
+				return 0;
 			}
 
 		}
@@ -73,17 +83,17 @@ public class ResistancePathFinder {
 		queue = new PriorityQueue<State>();
 	}
 	
-	private int getTileResistance(int p, int x, int y){
+	private double getTileResistance(int p, int x, int y,char t){
 		if(x<0 ||x>m.size-1 || y<0 ||y>m.size-1) return 0;
 		if(map[x][y].resistance<10000){
 			return map[x][y].resistance;
 		}else{
-			return model.getTileResistance(p, x, y);
+			return model.getTileResistance(p, x, y,t);
 		}
 	}
 
 	public char findPath(double x1, double y1, double x2, double y2, double diameter, int p,
-			boolean evade) {
+			boolean evade, char t) {
 		this.evade = evade;
 		char direction = 'n';
 		queue.clear();
@@ -120,29 +130,29 @@ public class ResistancePathFinder {
 			}
 		}
 		
-		int resistance = this.getTileResistance(p, startX, startY) + this.getTileResistance(p, startX + 1, startY)
-				+ this.getTileResistance(p, startX - 1, startY) + this.getTileResistance(p, startX, startY + 1)
-				+ this.getTileResistance(p, startX, startY - 1);
+		double resistance = this.getTileResistance(p, startX, startY,t) + this.getTileResistance(p, startX + 1, startY,t)
+				+ this.getTileResistance(p, startX - 1, startY,t) + this.getTileResistance(p, startX, startY + 1,t)
+				+ this.getTileResistance(p, startX, startY - 1,t);
 		if (startY > 0)
 			map[startX][startY - 1].set('u', 1,
-					resistance + this.getTileResistance(p, startX, startY - 2)
-							+ this.getTileResistance(p, startX - 1, startY - 1)
-							+ this.getTileResistance(p, startX + 1, startY - 1));
+					resistance + this.getTileResistance(p, startX, startY - 2,t)
+							+ this.getTileResistance(p, startX - 1, startY - 1,t)
+							+ this.getTileResistance(p, startX + 1, startY - 1,t));
 		if (startX < m.size - 1)
 			map[startX + 1][startY].set('r', 1,
-					resistance + this.getTileResistance(p, startX + 2, startY)
-							+ this.getTileResistance(p, startX + 1, startY + 1)
-							+ this.getTileResistance(p, startX + 1, startY - 1));
+					resistance + this.getTileResistance(p, startX + 2, startY,t)
+							+ this.getTileResistance(p, startX + 1, startY + 1,t)
+							+ this.getTileResistance(p, startX + 1, startY - 1,t));
 		if (startX > 0)
 			map[startX - 1][startY].set('l', 1,
-					resistance + this.getTileResistance(p, startX - 2, startY)
-							+ this.getTileResistance(p, startX - 1, startY + 1)
-							+ this.getTileResistance(p, startX - 1, startY - 1));
+					resistance + this.getTileResistance(p, startX - 2, startY,t)
+							+ this.getTileResistance(p, startX - 1, startY + 1,t)
+							+ this.getTileResistance(p, startX - 1, startY - 1,t));
 		if (startY < m.size - 1)
 			map[startX][startY + 1].set('d', 1,
-					resistance + this.getTileResistance(p, startX, startY + 2)
-							+ this.getTileResistance(p, startX + 1, startY + 1)
-							+ this.getTileResistance(p, startX - 1, startY + 1));
+					resistance + this.getTileResistance(p, startX, startY + 2,t)
+							+ this.getTileResistance(p, startX + 1, startY + 1,t)
+							+ this.getTileResistance(p, startX - 1, startY + 1,t));
 
 		State s;
 		while (queue.size() > 0) {
@@ -154,27 +164,27 @@ public class ResistancePathFinder {
 			}
 			if (s.x < m.size) {
 				map[s.x + 1][s.y].set(s.direction, s.travelled + 1,
-						s.resistance + this.getTileResistance(p, s.x + 2, s.y)
-								+ this.getTileResistance(p, s.x + 1, s.y + 1)
-								+ this.getTileResistance(p, s.x + 1, s.y - 1));
+						s.resistance + this.getTileResistance(p, s.x + 2, s.y,t)
+								+ this.getTileResistance(p, s.x + 1, s.y + 1,t)
+								+ this.getTileResistance(p, s.x + 1, s.y - 1,t));
 			}
 			if (s.x > 0) {
 				map[s.x - 1][s.y].set(s.direction, s.travelled + 1,
-						s.resistance + this.getTileResistance(p, s.x - 2, s.y)
-								+ this.getTileResistance(p, s.x - 1, s.y + 1)
-								+ this.getTileResistance(p, s.x - 1, s.y - 1));
+						s.resistance + this.getTileResistance(p, s.x - 2, s.y,t)
+								+ this.getTileResistance(p, s.x - 1, s.y + 1,t)
+								+ this.getTileResistance(p, s.x - 1, s.y - 1,t));
 			}
 			if (s.y < m.size) {
 				map[s.x][s.y + 1].set(s.direction, s.travelled + 1,
-						s.resistance + this.getTileResistance(p, s.x, s.y + 2)
-								+ this.getTileResistance(p, s.x + 1, s.y + 1)
-								+ this.getTileResistance(p, s.x - 1, s.y + 1));
+						s.resistance + this.getTileResistance(p, s.x, s.y + 2,t)
+								+ this.getTileResistance(p, s.x + 1, s.y + 1,t)
+								+ this.getTileResistance(p, s.x - 1, s.y + 1,t));
 			}
 			if (s.y > 0) {
 				map[s.x][s.y - 1].set(s.direction, s.travelled + 1,
-						s.resistance + this.getTileResistance(p, startX, s.y - 2)
-								+ this.getTileResistance(p, s.x - 1, s.y - 1)
-								+ this.getTileResistance(p, s.x + 1, s.y - 1));
+						s.resistance + this.getTileResistance(p, startX, s.y - 2,t)
+								+ this.getTileResistance(p, s.x - 1, s.y - 1,t)
+								+ this.getTileResistance(p, s.x + 1, s.y - 1,t));
 			}
 		}
 

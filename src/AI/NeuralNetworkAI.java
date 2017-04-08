@@ -15,31 +15,41 @@ import Assets.Unit;
 import Main.Model;
 import Main.Order;
 import Main.Player;
-import PathFinder.*;
+import Neural.NeuralNetwork;
+import PathFinder.ResistancePathFinder;
+import PathFinder.ShortestPathFinder;
 
-public class ClassicAI implements AI {
-
+public class NeuralNetworkAI implements AI {
 	Model model;
-	int playerID;
+	int playerID, enemyID;
 	Player enemy, self;
 	ConcurrentLinkedQueue<Order> orderQueue;
 	ResistancePathFinder p;
-	List<Character> actions = Arrays.asList('u', 'd', 'l', 'r', 'n');
+	ShortestPathFinder sp;
+	List<String> actions = Arrays.asList("defendBase", "defensiveInvade", "evasiveInvade", "hunt");
 	List<Character> production = Arrays.asList('n', 's', 'a', 'c');
+	NeuralNetwork net;
+	int inputs = 9;
+	int[] size = { inputs, 50, actions.size() };
+	int range=1;
+	double[] input;
+	double[][] activation;
 
-	public ClassicAI(ConcurrentLinkedQueue<Order> orderQueue, Model m, int player) {
+	public NeuralNetworkAI(ConcurrentLinkedQueue<Order> orderQueue, Model m, int player) {
 		playerID = player;
 		this.orderQueue = orderQueue;
 		model = m;
-		// p=new ShortestPathFinder();
 		p = new ResistancePathFinder(m);
+		sp = new ShortestPathFinder(m.getLevelMap());
+		net = new NeuralNetwork(size);
+		input=new double[inputs];
 	}
 
 	@Override
 	public void determineAction(Asset a) {
-		// Random random = new Random();
 		char action = 'n';
 
+		Random random = new Random();
 		if (a instanceof Building) {
 			Building b = (Building) a;
 			if (b.getProductionTimer() > 0) {
@@ -64,42 +74,48 @@ public class ClassicAI implements AI {
 
 			}
 		} else if (a instanceof Unit) {
-			Unit b = (Unit) a;
-
-			// initial target
-			double targetX = enemy.baseX / model.getMapSize();
-			double targetY = enemy.baseY / model.getMapSize();
-
-			// if close enemy assets that can be countered by unit
-			double distance = 3.0 / model.getMapSize();
-			int cnt = 0;
-			for (Asset enemyAsset : enemy.getAssets()) {
-				if (enemyAsset instanceof Unit) {
-					Unit e = (Unit) enemyAsset;
-					double interceptDistance = Math.abs(e.getX() - a.getX()) + Math.abs(e.getY() - a.getY()); 
-					if (distance >= interceptDistance ) {
-						cnt++;
-						if (cnt == 1) {
-							// first enemy that can be countered -> new target
-							// location
-							targetX = e.getX();
-							targetY = e.getY();
-							action = 'n';
-							// System.out.println("New target");
-						}
+			Unit u = (Unit) a;
+			if (u.getState().equals("idle")) {
+				input[0]=u.getHitPoints();
+				if(u.getType()=='s'){
+					input[1]=0;
+				}else if(u.getType()=='a'){
+					input[1]=1;
+				}else{
+					input[1]=2;
+				}
+				
+				double resistance=0;
+				for(int i=-range;i<=range;i++){
+					for(int j=-range;i<=range;i++){
+						resistance += model.getTileResistance(playerID, i, i,u.getType());
 					}
 				}
+				input[2]=resistance;
+				
+				input[3]=enemy.archerCount;
+				input[4]=enemy.cavalryCount;
+				input[5]=enemy.spearmanCount;
+				input[6]=self.attackers;
+				input[7]=self.defenders;
+				input[8]=self.hunters;
+				
+				activation = net.forwardProp(input);
+				
+				double[] output=activation[size.length-1];
+				int best=0;
+				for(int i=0;i<output.length;i++){
+					String str = String.format("%1.2f", output[i])+" ";
+					System.out.print(str);
+					if(output[i]>output[best]){
+						best=i;
+					}
+				}
+				System.out.println(actions.get(best));
+				u.setState(actions.get(best));
 			}
 			
-			if (b.getType()=='c' && enemy.archerCount==0) {
-				// if on same square move directly towards target choose path with least enemies
-				action = p.findPath(a.getX(), a.getY(), targetX, targetY, a.getDiameter(),
-						playerID, true,'c');
-			} else {
-				// if on same square move directly towards target choose path with most enemies
-				action = p.findPath(a.getX(), a.getY(), targetX, targetY, a.getDiameter(),
-						playerID, false,b.getType());
-			}
+			action = u.determineAction(p, sp, model, enemyID);
 
 		}
 		a.setIdle(false);
@@ -111,8 +127,10 @@ public class ClassicAI implements AI {
 	public void run() {
 		self = model.getPlayerList().get(playerID);
 		if (playerID == 1) {
+			enemyID = 2;
 			enemy = model.getPlayerList().get(2);
 		} else {
+			enemyID = 1;
 			enemy = model.getPlayerList().get(1);
 		}
 		long ctime;
@@ -132,6 +150,7 @@ public class ClassicAI implements AI {
 				e.printStackTrace();
 			}
 		}
+
 	}
 
 }

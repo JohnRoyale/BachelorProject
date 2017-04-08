@@ -8,7 +8,7 @@ import Assets.*;
 
 public class Model extends Observable {
 
-	final int populationCap = 100;
+	final int populationCap = 20;
 
 	Map levelMap;
 
@@ -154,14 +154,25 @@ public class Model extends Observable {
 		}
 	}
 
-	public int getTileResistance(int playerID, int x, int y) {
-		int resistance = 0;
+	public double getTileResistance(int playerID, int x, int y, char type) {
+		double resistance = 0;
 
 		for (Player p : playerList) {
 			for (Asset a : p.getAssets()) {
 				if ((int) (a.getX() * mapSize) == x && (int) (a.getY() * mapSize) == y) {
 					if (p.playerId != playerID) {
-						resistance++;
+						if(a instanceof Unit){
+							Unit u=(Unit) a;
+							if(type== 'a' && u.getType()=='s'){
+								resistance +=.5;
+							}else if(type== 's' && u.getType()=='c'){
+								resistance +=.5;
+							}else if(type== 'c' && u.getType()=='a'){
+								resistance +=.5;
+							}else{
+								resistance++;
+							}
+						}
 					}else{
 						resistance--;
 					}

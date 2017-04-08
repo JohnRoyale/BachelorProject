@@ -85,7 +85,7 @@ public abstract class Unit extends Asset {
 			if (Math.abs(this.xCor * mapSize- p.baseX)+Math.abs(this.yCor * mapSize - p.baseY) > 5) {
 				//System.out.println("walk back ");
 				a = rp.findPath(this.xCor, this.yCor, p.baseX / mapSize, p.baseY / mapSize, this.getDiameter(),
-						this.owner, false);
+						this.owner, false,type);
 			} else {
 				double minDist=3;
 				Asset target=null;
@@ -117,13 +117,13 @@ public abstract class Unit extends Asset {
 		// Attack enemy through route with most resistance
 		case "defensiveInvade":
 			a = rp.findPath(this.xCor, this.yCor, e.baseX/m.getMapSize(), e.baseY/m.getMapSize(), this.getDiameter(),
-					this.owner, false);
+					this.owner, false,type);
 			// Find a short path with most resistance
 			break;
 		// Attack enemy through route with least resistance
 		case "evasiveInvade":
 			a = rp.findPath(this.xCor, this.yCor, e.baseX/m.getMapSize(), e.baseY/m.getMapSize(), this.getDiameter(),
-					this.owner, true);
+					this.owner, true,type);
 			// Find a short path with least resistance to enemy
 			break;
 		// Attack closest enemy unit, maybe make it only attack its preferred
@@ -143,7 +143,7 @@ public abstract class Unit extends Asset {
 			}
 			if(target != null){
 				a = rp.findPath(this.xCor, this.yCor, target.getX(), target.getY(), this.getDiameter(),
-						this.owner, true);
+						this.owner, true,type);
 				turnCount=0;
 			}else{
 				state="idle";
