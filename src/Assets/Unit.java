@@ -18,12 +18,16 @@ public abstract class Unit extends Asset {
 	double attackRange;
 	double offsetX=1,offsetY=1;
 	Random random;
+	int kills;
+	int turnsAlive;
 	Player p;
 	
 	final List<Character> actions = Arrays.asList('u', 'd', 'l', 'r', 'n');
 	
 	public Unit(int owner, double x, double y, int hp, int ap, double d, double attackRange, int mapSize) {
 		super(owner, x, y, 0.6 / mapSize, hp);
+		kills=0;
+		turnsAlive=0;
 		attackPower = ap;
 		this.attackRange = attackRange;
 		this.speed = d;
@@ -102,7 +106,7 @@ public abstract class Unit extends Asset {
 					turnCount=0;
 				}else{
 					//System.out.println("patrolling");
-					a = sp.findPath(this.xCor, this.yCor, p.baseX / mapSize+offsetX, p.baseY / mapSize+offsetY, this.getDiameter());
+					a = sp.findPath(this.xCor, this.yCor, (p.baseX / mapSize)+offsetX, (p.baseY / mapSize)+offsetY, this.getDiameter());
 					
 					//a=actions.get(random.nextInt(actions.size()));
 					if(turnCount++ > 1000){
@@ -154,5 +158,20 @@ public abstract class Unit extends Asset {
 
 		return a;
 	}
-
+	
+	public void incKills(){
+		kills++;
+	}
+	
+	public int getKills(){
+		return kills;
+	}
+	
+	public void incTurns(){
+		turnsAlive++;
+	}
+	
+	public int getTurns(){
+		return turnsAlive;
+	}
 }

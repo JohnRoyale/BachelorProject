@@ -68,6 +68,7 @@ public class Controller extends Observable{
 				model.order((Building) o.a, o.action);
 			}else{
 				model.order((Unit) o.a, o.action);
+				((Unit)o.a).incTurns();
 			}
 			this.setChanged();
 		}
