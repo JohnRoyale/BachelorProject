@@ -136,8 +136,14 @@ public class Model extends Observable {
 						if (a instanceof Unit && ((Unit) a).getType() == u.getCounter()) {
 							damage = (int) Math.round(damage * 1.5);
 						}
-
-						a.damage(damage);
+						
+						if(u.getCoolDown() == 0) {
+							a.damage(damage);
+							u.setCoolDown(u.getAttackSpeed());
+						} else {
+							u.setCoolDown(u.getCoolDown()-1);
+						}
+						
 						if (a.getHitPoints() <= 0) {
 							u.incKills();
 							if(u.getState().equals("hunt"))u.setState("idle");

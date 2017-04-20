@@ -10,11 +10,13 @@ import PathFinder.*;
 
 public abstract class Unit extends Asset {
 	int attackPower;
+	int attackSpeed;
 	double speed;
 	String state;
 	char type;
 	char counter;
 	int turnCount;
+	int attackCoolDown;
 	double attackRange;
 	double offsetX=1,offsetY=1;
 	Random random;
@@ -24,11 +26,13 @@ public abstract class Unit extends Asset {
 	
 	final List<Character> actions = Arrays.asList('u', 'd', 'l', 'r', 'n');
 	
-	public Unit(int owner, double x, double y, int hp, int ap, double d, double attackRange, int mapSize) {
+	public Unit(int owner, double x, double y, int hp, int ap, int as, double d, double attackRange, int mapSize) {
 		super(owner, x, y, 0.6 / mapSize, hp);
 		kills=0;
 		turnsAlive=0;
 		attackPower = ap;
+		attackSpeed = as;
+		attackCoolDown = 0;
 		this.attackRange = attackRange;
 		this.speed = d;
 		state = "idle";
@@ -38,6 +42,18 @@ public abstract class Unit extends Asset {
 
 	public int getAttackPower() {
 		return attackPower;
+	}
+	
+	public int getAttackSpeed() {
+		return attackSpeed;
+	}
+	
+	public int getCoolDown() {
+		return attackCoolDown;
+	}
+	
+	public void setCoolDown(int s) {
+		attackCoolDown = s;
 	}
 
 	public char getType() {
