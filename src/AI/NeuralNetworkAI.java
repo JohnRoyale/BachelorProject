@@ -111,8 +111,10 @@ public class NeuralNetworkAI implements AI {
 						best=i;
 					}
 				}
-				System.out.println(actions.get(best));
-				u.setState(actions.get(best));
+				String s=actions.get(best);
+				System.out.println(s);
+				u.addState(input, s);
+				u.setState(s);
 			}
 			
 			action = u.determineAction(p, sp, model, enemyID);

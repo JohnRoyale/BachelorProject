@@ -1,5 +1,6 @@
 package Assets;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -23,6 +24,23 @@ public abstract class Unit extends Asset {
 	int kills;
 	int turnsAlive;
 	Player p;
+	ArrayList<State> history;
+	
+	class State{
+		int reward;
+		double[] input;
+		String output;
+		
+		public State(double[] in,String out){
+			this.input=in;
+			this.output=out;
+			reward=0;
+		}
+		
+		public void incrementReward(int i){
+			reward += i;
+		}
+	}
 	
 	final List<Character> actions = Arrays.asList('u', 'd', 'l', 'r', 'n');
 	
@@ -37,7 +55,16 @@ public abstract class Unit extends Asset {
 		this.speed = d;
 		state = "idle";
 		turnCount=0;
+		history=new ArrayList<State>();
 		random=new Random(System.currentTimeMillis());
+	}
+	
+	public void addState(double[] in, String out){
+		history.add(new State(in,out));
+	}
+	
+	public void reward(int r){
+		history.get(history.size()-1).incrementReward(r);
 	}
 
 	public int getAttackPower() {
