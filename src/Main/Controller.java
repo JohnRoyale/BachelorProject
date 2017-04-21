@@ -79,4 +79,21 @@ public class Controller extends Observable{
 	public boolean gameOver() {
 		return model.gameOver();
 	}
+
+	public void backProp() {
+		if(player1 instanceof NeuralNetworkAI){
+			((NeuralNetworkAI)player1).learn();
+		}
+		
+		if(player2 instanceof NeuralNetworkAI){
+			((NeuralNetworkAI)player2).learn();
+		}
+		
+		
+	}
+
+	public void reset() {
+		model.reset();
+		orderQueue.clear();
+	}
 }

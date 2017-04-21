@@ -8,8 +8,8 @@ public class NeuralNetwork {
 	static double[][][] dWeights;
 	static int[] size;
 	static double[][] activation;
-	static double startingLearningRate = 0.1;
-	static double minLearningRate=0.05;
+	static double startingLearningRate = 0.4;
+	static double minLearningRate=0.2;
 	static double degration = 0.9;
 	static double momentum =0.1;
 	static double maxError = 0.01;
@@ -69,6 +69,57 @@ public class NeuralNetwork {
 			}
 		}
 		return activation;
+	}
+	
+	private static double[] arraySub(double[] A, double[] B) {
+		if (A.length != B.length)
+			System.err.print("Arrays need to be off equals size to substract");
+		double[] C = new double[A.length];
+		for (int i = 0; i < A.length; i++)
+			C[i] = A[i] - B[i];
+		return C;
+	}
+	
+	public void backProp(double[][] activation, double[] expectedOutput) {
+		double[][] error = new double[activation.length][];
+
+		for (int i = 0; i < activation.length; i++) {
+			error[i] = new double[activation[i].length];
+		}
+
+		double[][] delta = new double[size.length][];
+		for (int i = 0; i < delta.length; i++) {
+			delta[i] = new double[size[i]];
+		}
+
+		error[error.length - 1] = arraySub(expectedOutput, activation[activation.length - 1]);
+
+		for (int k = weights.length - 1; k > 0; k--) {
+			if (k > 0) {
+				error[k] = new double[error[k].length];
+			}
+			for (int i = 0; i < delta[k + 1].length; i++) {
+				if (k != weights.length - 1) {
+					delta[k + 1][i] = error[k + 1][i] * dSigmoid(activation[k + 1][i]);
+				} else {
+					delta[k + 1][i] = error[k + 1][i];
+				}
+				for (int j = 0; j < weights[k][i].length; j++) {
+					error[k][j] += delta[k + 1][i] * weights[k][i][j];
+				}
+			}
+		}
+
+		for (int k = weights.length - 1; k > 0; k--) {
+			for (int i = 0; i < weights[k].length; i++) {
+				for (int j = 0; j < weights[k][i].length; j++) {
+					dWeights[k][i][j] =startingLearningRate * delta[k + 1][i] * activation[k][j]+
+							momentum*dWeights[k][i][j];
+					weights[k][i][j] += dWeights[k][i][j];
+				}
+			}
+		}
+
 	}
 	
 	

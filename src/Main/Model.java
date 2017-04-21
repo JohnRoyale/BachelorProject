@@ -12,6 +12,12 @@ public class Model extends Observable {
 
 	Map levelMap;
 
+	final int damageReward = 2;
+	final int killReward = 50;
+	final int baseKillReward = 300;
+	final int deathReward= -60;
+	final int timeReward=-1;
+	
 	private ArrayList<Player> playerList;
 	double mapSize;
 	boolean gameOver = false;
@@ -41,6 +47,10 @@ public class Model extends Observable {
 			}
 		}
 
+		initBase();
+	}
+	
+	private void initBase(){
 		playerList.get(1).addAsset(new Building(1, playerList.get(1).baseX / (float) levelMap.size,
 				playerList.get(1).baseY / (float) levelMap.size, 10, levelMap.size));
 		playerList.get(2).addAsset(new Building(2, playerList.get(2).baseX / (float) levelMap.size,
@@ -49,6 +59,7 @@ public class Model extends Observable {
 
 	public void order(Unit u, char action) {
 		// moves unit to new position
+		u.reward(timeReward);
 		double movement = u.getSpeed() * 0.05 / levelMap.size;
 		switch (action) {
 		case ('u'): {
@@ -140,17 +151,23 @@ public class Model extends Observable {
 						if(u.getCoolDown() == 0) {
 							a.damage(damage);
 							u.setCoolDown(u.getAttackSpeed());
+							u.reward(damage*damageReward);
 						} else {
 							u.setCoolDown(u.getCoolDown()-1);
 						}
 						
 						if (a.getHitPoints() <= 0) {
 							u.incKills();
+							
+							if(a instanceof Unit){
+								((Unit)a).reward(deathReward);
+								u.reward(killReward);
+							}else{
+								gameOver=true;
+								u.reward(baseKillReward);
+							}
 							if(u.getState().equals("hunt"))u.setState("idle");
 							
-							if(a instanceof Building){
-								gameOver=true;
-							}
 							p.getLostAssets().add(a);
 							p.getAssets().remove(a);
 						}
@@ -208,5 +225,16 @@ public class Model extends Observable {
 
 	public ArrayList<Player> getPlayerList() {
 		return this.playerList;
+	}
+
+	public void reset() {
+		gameOver=false;
+		
+		for(Player p:playerList){
+			p.getAssets().clear();
+			p.getLostAssets().clear();
+		}
+		initBase();
+		
 	}
 }

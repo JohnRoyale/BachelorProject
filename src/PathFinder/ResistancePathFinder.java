@@ -7,7 +7,7 @@ import Main.Model;
 
 public class ResistancePathFinder {
 
-	class State implements Comparable<State> {
+	class Position implements Comparable<Position> {
 		int x, y;
 		int travelled;
 		double resistance;
@@ -15,7 +15,7 @@ public class ResistancePathFinder {
 		int total;
 		char direction;
 
-		public State(int x, int y, char direction, int travelled, int resistance, int heuristic) {
+		public Position(int x, int y, char direction, int travelled, int resistance, int heuristic) {
 			this.x = x;
 			this.y = y;
 			this.resistance = resistance;
@@ -37,7 +37,7 @@ public class ResistancePathFinder {
 		}
 
 		@Override
-		public int compareTo(State s) {
+		public int compareTo(Position s) {
 
 			if (this.total > s.total) {
 				if (this.total > s.total + 3)
@@ -65,13 +65,13 @@ public class ResistancePathFinder {
 		}
 	}
 
-	private PriorityQueue<State> queue;
-	State[][] map;
+	private PriorityQueue<Position> queue;
+	Position[][] map;
 	private Map m;
 	Model model;
 	private boolean evade;
 
-	private void addState(State s) {
+	private void addState(Position s) {
 		if (m.getTile(s.x, s.y) != '#') {
 			queue.offer(s);
 		}
@@ -80,7 +80,7 @@ public class ResistancePathFinder {
 	public ResistancePathFinder(Model model) {
 		this.m = model.getLevelMap();
 		this.model = model;
-		queue = new PriorityQueue<State>();
+		queue = new PriorityQueue<Position>();
 	}
 
 	private double getTileResistance(int p, int x, int y, char t) {
@@ -98,7 +98,7 @@ public class ResistancePathFinder {
 		char direction = 'n';
 		queue.clear();
 
-		map = new State[m.size][m.size];
+		map = new Position[m.size][m.size];
 
 		int startX = (int) (x1 * m.size);
 		int startY = (int) (y1 * m.size);
@@ -125,7 +125,7 @@ public class ResistancePathFinder {
 
 		for (int i = 0; i < m.size; i++) {
 			for (int j = 0; j < m.size; j++) {
-				map[i][j] = new State(i, j, 'n', 1000 * m.size, 10000, this.heuristic(i, j, goalX, goalY));
+				map[i][j] = new Position(i, j, 'n', 1000 * m.size, 10000, this.heuristic(i, j, goalX, goalY));
 			}
 		}
 
@@ -153,7 +153,7 @@ public class ResistancePathFinder {
 							+ this.getTileResistance(p, startX + 1, startY + 1, t)
 							+ this.getTileResistance(p, startX - 1, startY + 1, t));
 
-		State s;
+		Position s;
 		while (queue.size() > 0) {
 
 			s = queue.poll();

@@ -6,14 +6,14 @@ import Main.Map;
 
 public class ShortestPathFinder {
 	
-	class State implements Comparable<State>{
+	class Position implements Comparable<Position>{
 		int x,y;
 		int travelled;
 		int heuristic;
 		int total;
 		char direction;
 		
-		public State(int x, int y,char direction, int travelled,int heuristic){
+		public Position(int x, int y,char direction, int travelled,int heuristic){
 			this.x=x;
 			this.y=y;
 			this.direction=direction;
@@ -30,19 +30,19 @@ public class ShortestPathFinder {
 			}
 		}
 		@Override
-		public int compareTo(State s) {	            
+		public int compareTo(Position s) {	            
 			return this.total-s.total;
 		}
 	}
 	
-	private PriorityQueue<State> queue;
+	private PriorityQueue<Position> queue;
 	private Map m;
 	
 	public ShortestPathFinder(Map levelMap) {
 		m=levelMap;
 	}
 
-	private void addState(State s){
+	private void addState(Position s){
 		if(m.getTile(s.x, s.y)!= '#'){
 			queue.offer(s);
 		}
@@ -51,8 +51,8 @@ public class ShortestPathFinder {
 	public char findPath(double x1,double y1,double x2,double y2,double diameter){
 		this.m=m;
 		char direction='n';
-		queue= new PriorityQueue<State>();
-		State[][] map=new State[m.size][m.size];
+		queue= new PriorityQueue<Position>();
+		Position[][] map=new Position[m.size][m.size];
 		
 		int startX=(int)(x1*m.size);
 		int startY=(int)(y1*m.size);
@@ -81,7 +81,7 @@ public class ShortestPathFinder {
 		
 		for(int i=0;i<m.size;i++){
 			for(int j=0;j<m.size;j++){
-				map[i][j]=new State(i,j,'n',1000*m.size,this.heuristic(i, j, goalX, goalY));
+				map[i][j]=new Position(i,j,'n',1000*m.size,this.heuristic(i, j, goalX, goalY));
 			}
 		}
 		if(startY>0)map[startX][startY-1].set('u', 1);
@@ -89,7 +89,7 @@ public class ShortestPathFinder {
 		if(startX>0)map[startX-1][startY].set('l', 1);
 		if(startY<m.size-1)map[startX][startY+1].set('d', 1);
 		
-		State s;
+		Position s;
 		while(queue.size()>0){
 			
 			s = queue.poll();

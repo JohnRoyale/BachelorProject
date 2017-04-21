@@ -1,6 +1,7 @@
 package AI;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -32,6 +33,7 @@ public class NeuralNetworkAI implements AI {
 	int inputs = 9;
 	int[] size = { inputs, 50, actions.size() };
 	int range=1;
+	double gamma=0.95;
 	double[] input;
 	double[][] activation;
 
@@ -111,9 +113,14 @@ public class NeuralNetworkAI implements AI {
 						best=i;
 					}
 				}
+				
+				if(random.nextInt(100)>80){
+					best=random.nextInt(actions.size());
+				}
+				
 				String s=actions.get(best);
 				System.out.println(s);
-				u.addState(input, s);
+				u.addState(input, best);
 				u.setState(s);
 			}
 			
@@ -153,6 +160,37 @@ public class NeuralNetworkAI implements AI {
 			}
 		}
 
+	}
+
+	public void learn() {
+		for(Asset a : self.getAssets()){
+			if(a instanceof Unit){
+				Unit u=(Unit)a;
+				Collections.reverse(u.getHistory());
+				double lastReward=0;
+				for(State s : u.getHistory()){
+					double[][] activation = net.forwardProp(s.input);
+					double[] expectedOutput=activation[size.length-1];
+					expectedOutput[s.output]=s.reward+gamma*lastReward;
+					
+					net.backProp(activation, expectedOutput);
+				}
+			}
+		}
+		for(Asset a : self.getLostAssets()){
+			if(a instanceof Unit){
+				Unit u=(Unit)a;
+				Collections.reverse(u.getHistory());
+				double lastReward=0;
+				for(State s : u.getHistory()){
+					double[][] activation = net.forwardProp(s.input);
+					double[] expectedOutput=activation[size.length-1];
+					expectedOutput[s.output]=s.reward+gamma*lastReward;
+					
+					net.backProp(activation, expectedOutput);
+				}
+			}
+		}
 	}
 
 }

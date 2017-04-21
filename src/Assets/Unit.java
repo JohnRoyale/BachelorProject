@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import AI.State;
 import Main.Model;
 import Main.Player;
 import PathFinder.*;
@@ -26,21 +27,7 @@ public abstract class Unit extends Asset {
 	Player p;
 	ArrayList<State> history;
 	
-	class State{
-		int reward;
-		double[] input;
-		String output;
-		
-		public State(double[] in,String out){
-			this.input=in;
-			this.output=out;
-			reward=0;
-		}
-		
-		public void incrementReward(int i){
-			reward += i;
-		}
-	}
+	
 	
 	final List<Character> actions = Arrays.asList('u', 'd', 'l', 'r', 'n');
 	
@@ -59,12 +46,14 @@ public abstract class Unit extends Asset {
 		random=new Random(System.currentTimeMillis());
 	}
 	
-	public void addState(double[] in, String out){
+	public void addState(double[] in, int out){
 		history.add(new State(in,out));
 	}
 	
 	public void reward(int r){
-		history.get(history.size()-1).incrementReward(r);
+		if(history.size()>0){
+			history.get(history.size()-1).incrementReward(r);
+		}
 	}
 
 	public int getAttackPower() {
@@ -111,6 +100,10 @@ public abstract class Unit extends Asset {
 		this.state = state;
 	}
 
+	public ArrayList<State> getHistory(){
+		return history;
+	}
+	
 	public char determineAction(ResistancePathFinder rp, ShortestPathFinder sp, Model m, int enemy) {
 		char a = 'n';
 		Player e = m.getPlayerList().get(enemy);
