@@ -8,13 +8,13 @@ import Assets.*;
 
 public class Model extends Observable {
 
-	final int populationCap = 20;
+	final int populationCap = 100;
 
 	Map levelMap;
 
 	final int damageReward = 2;
 	final int killReward = 50;
-	final int baseKillReward = 300;
+	final int baseKillReward = 1000;
 	final int deathReward= -60;
 	final int timeReward=-1;
 	

@@ -30,12 +30,13 @@ public class NeuralNetworkAI implements AI {
 	List<String> actions = Arrays.asList("defendBase", "defensiveInvade", "evasiveInvade", "hunt");
 	List<Character> production = Arrays.asList('n', 's', 'a', 'c');
 	NeuralNetwork net;
-	int inputs = 9;
-	int[] size = { inputs, 50, actions.size() };
-	int range=1;
-	double gamma=0.95;
+	int inputs = 13;
+	int[] size = { inputs, 20, 50, 20, actions.size() };
+	int range = 1;
+	double gamma = 0.95;
 	double[] input;
 	double[][] activation;
+	int chance;
 
 	public NeuralNetworkAI(ConcurrentLinkedQueue<Order> orderQueue, Model m, int player) {
 		playerID = player;
@@ -44,7 +45,8 @@ public class NeuralNetworkAI implements AI {
 		p = new ResistancePathFinder(m);
 		sp = new ShortestPathFinder(m.getLevelMap());
 		net = new NeuralNetwork(size);
-		input=new double[inputs];
+		input = new double[inputs];
+		chance = 1;
 	}
 
 	@Override
@@ -78,58 +80,83 @@ public class NeuralNetworkAI implements AI {
 		} else if (a instanceof Unit) {
 			Unit u = (Unit) a;
 			if (u.getState().equals("idle")) {
-				input[0]=u.getHitPoints();
-				if(u.getType()=='s'){
-					input[1]=0;
-				}else if(u.getType()=='a'){
-					input[1]=1;
-				}else{
-					input[1]=2;
+				input[0] = u.getHitPoints();
+				if (u.getType() == 's') {
+					input[1] = 1;
+					input[2] = 0;
+					input[3] = 0;
+				} else if (u.getType() == 'a') {
+					input[1] = 0;
+					input[2] = 1;
+					input[3] = 0;
+				} else {
+					input[1] = 0;
+					input[2] = 0;
+					input[3] = 1;
 				}
-				
-				double resistance=0;
-				for(int i=-range;i<=range;i++){
-					for(int j=-range;i<=range;i++){
-						resistance += model.getTileResistance(playerID, i, i,u.getType());
+
+				double resistance = 0;
+				for (int i = -range; i <= range; i++) {
+					for (int j = -range; i <= range; i++) {
+						resistance += model.getTileResistance(playerID, i, i, u.getType());
 					}
 				}
-				input[2]=resistance;
-				
-				input[3]=enemy.archerCount;
-				input[4]=enemy.cavalryCount;
-				input[5]=enemy.spearmanCount;
-				input[6]=self.attackers;
-				input[7]=self.defenders;
-				input[8]=self.hunters;
-				
+				input[4] = resistance;
+
+				input[5] = enemy.archerCount;
+				input[6] = enemy.cavalryCount;
+				input[7] = enemy.spearmanCount;
+				input[8] = self.attackers;
+				input[9] = self.defenders;
+				input[10] = self.hunters;
+				Player enemy, owner;
+				if (u.getOwner() == 1) {
+					enemy = model.getPlayerList().get(2);
+					owner = model.getPlayerList().get(1);
+				} else {
+					enemy = model.getPlayerList().get(1);
+					owner = model.getPlayerList().get(2);
+				}
+
+				double mapsize = model.getMapSize();
+				input[11] = sp.findDistance(u.getX(), u.getY(), owner.baseX / mapsize, owner.baseY / mapsize,
+						u.getDiameter());
+				input[12] = sp.findDistance(u.getX(), u.getY(), enemy.baseX / mapsize, enemy.baseY / mapsize,
+						u.getDiameter());
+
 				activation = net.forwardProp(input);
-				
-				double[] output=activation[size.length-1];
-				int best=0;
-				for(int i=0;i<output.length;i++){
-					String str = String.format("%1.2f", output[i])+" ";
-					System.out.print(str);
-					if(output[i]>output[best]){
-						best=i;
+
+				double[] output = activation[size.length - 1];
+				int best = 0;
+				for (int i = 0; i < output.length; i++) {
+					String str = String.format("%1.2f", output[i]) + " ";
+					// System.out.print(str);
+					if (output[i] > output[best]) {
+						best = i;
 					}
 				}
-				
-				if(random.nextInt(100)>80){
-					best=random.nextInt(actions.size());
+
+				if (random.nextInt(100) > chance) {
+					best = random.nextInt(actions.size());
 				}
-				
-				String s=actions.get(best);
-				System.out.println(s);
+
+				String s = actions.get(best);
+				// System.out.println(s);
 				u.addState(input, best);
 				u.setState(s);
 			}
-			
+
 			action = u.determineAction(p, sp, model, enemyID);
 
 		}
 		a.setIdle(false);
 		orderQueue.add(new Order(a, action));
 
+	}
+
+	public void incChance() {
+		chance++;
+		chance = Math.min(90, chance);
 	}
 
 	@Override
@@ -142,51 +169,39 @@ public class NeuralNetworkAI implements AI {
 			enemyID = 1;
 			enemy = model.getPlayerList().get(1);
 		}
-		long ctime;
-		// Generate actions maybe add timer to prevent overloading the queue
-		while (true) {
-			ctime = System.currentTimeMillis();
 
-			for (Iterator<Asset> iter = self.getAssets().iterator(); iter.hasNext();) {
-				Asset a = iter.next();
-				this.determineAction(a);
-			}
-
-			try {
-				Thread.sleep(Math.max(20 - (System.currentTimeMillis() - ctime), 0));
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		for (Iterator<Asset> iter = self.getAssets().iterator(); iter.hasNext();) {
+			Asset a = iter.next();
+			this.determineAction(a);
 		}
 
 	}
 
 	public void learn() {
-		for(Asset a : self.getAssets()){
-			if(a instanceof Unit){
-				Unit u=(Unit)a;
+		for (Asset a : self.getAssets()) {
+			if (a instanceof Unit) {
+				Unit u = (Unit) a;
 				Collections.reverse(u.getHistory());
-				double lastReward=0;
-				for(State s : u.getHistory()){
+				double lastReward = 0;
+				for (State s : u.getHistory()) {
 					double[][] activation = net.forwardProp(s.input);
-					double[] expectedOutput=activation[size.length-1];
-					expectedOutput[s.output]=s.reward+gamma*lastReward;
-					
+					double[] expectedOutput = activation[size.length - 1];
+					expectedOutput[s.output] = s.reward + gamma * lastReward;
+
 					net.backProp(activation, expectedOutput);
 				}
 			}
 		}
-		for(Asset a : self.getLostAssets()){
-			if(a instanceof Unit){
-				Unit u=(Unit)a;
+		for (Asset a : self.getLostAssets()) {
+			if (a instanceof Unit) {
+				Unit u = (Unit) a;
 				Collections.reverse(u.getHistory());
-				double lastReward=0;
-				for(State s : u.getHistory()){
+				double lastReward = 0;
+				for (State s : u.getHistory()) {
 					double[][] activation = net.forwardProp(s.input);
-					double[] expectedOutput=activation[size.length-1];
-					expectedOutput[s.output]=s.reward+gamma*lastReward;
-					
+					double[] expectedOutput = activation[size.length - 1];
+					expectedOutput[s.output] = s.reward + gamma * lastReward;
+
 					net.backProp(activation, expectedOutput);
 				}
 			}

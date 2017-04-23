@@ -9,12 +9,9 @@ public class NeuralNetwork {
 	static int[] size;
 	static double[][] activation;
 	static double startingLearningRate = 0.4;
-	static double minLearningRate=0.2;
+	static double minLearningRate=0.1;
 	static double degration = 0.9;
-	static double momentum =0.1;
-	static double maxError = 0.01;
-	static int maxEpoch=100000000;
-	static int printD = Math.max(maxEpoch/10000,10);
+	static double momentum =0.0;
 	static double bias = -1;
 	
 	

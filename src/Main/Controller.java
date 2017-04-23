@@ -53,15 +53,16 @@ public class Controller extends Observable{
 		this.setChanged();
 		this.notifyObservers();
 		
-		this.update();
+		this.update(true);
 	}
 
 	public void addOrderToQueue(Order o){
 		orderQueue.add(o);
 	}
 	
-	public void update(){
+	public void update(boolean draw){
 		int size=orderQueue.size();
+		//System.out.println(size);
 		for(int i=0;i<size;i++){
 			Order o=orderQueue.poll();		
 			if(o.a instanceof Building){
@@ -70,9 +71,13 @@ public class Controller extends Observable{
 				model.order((Unit) o.a, o.action);
 				((Unit)o.a).incTurns();
 			}
-			this.setChanged();
+			if(draw)
+				this.setChanged();
 		}
-		this.notifyObservers();
+		player1.run();
+		player2.run();
+		if(draw)
+			this.notifyObservers();
 		
 	}
 
@@ -83,10 +88,12 @@ public class Controller extends Observable{
 	public void backProp() {
 		if(player1 instanceof NeuralNetworkAI){
 			((NeuralNetworkAI)player1).learn();
+			((NeuralNetworkAI)player1).incChance();
 		}
 		
 		if(player2 instanceof NeuralNetworkAI){
 			((NeuralNetworkAI)player2).learn();
+			((NeuralNetworkAI)player2).incChance();
 		}
 		
 		
@@ -95,5 +102,9 @@ public class Controller extends Observable{
 	public void reset() {
 		model.reset();
 		orderQueue.clear();
+	}
+
+	public boolean queueFull() {
+		return orderQueue.size()>=model.getPlayerList().get(1).getAssets().size()+model.getPlayerList().get(2).getAssets().size();
 	}
 }

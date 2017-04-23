@@ -7,22 +7,29 @@ public class Main {
 	public static void main(String[] args) {
 
 		Controller controller = new Controller();
-		long startTime=System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 		long ctime = System.currentTimeMillis();
-
-		for (int i = 0; i < 1000; i++) {
-			int k=0;
-			while (!controller.gameOver() && k< 300*50) {
-				if (System.currentTimeMillis() - ctime > 20) {
+		long gameTime;
+		boolean draw;
+		for (int i = 0; i < Integer.MAX_VALUE; i++) {
+			int k = 0;
+			gameTime = System.currentTimeMillis();
+			draw = i % 100 == 0;
+			while (!controller.gameOver() && k < 300 * 50) {
+				if (System.currentTimeMillis() - ctime > 20 || (!draw && controller.queueFull())) {
+					if (k % 1000 == 0)
+						System.out.println(System.currentTimeMillis() - ctime);
+					draw = System.currentTimeMillis() - ctime > 20 && draw;
 					ctime = System.currentTimeMillis();
-					controller.update();
+					controller.update(draw);
 					k++;
 				}
 			}
 			ctime = System.currentTimeMillis();
 			controller.backProp();
-			System.out.println("backProp: " + (System.currentTimeMillis()-ctime));
-			
+			System.out.println("Epoch: " + i + ", Round time: " + (System.currentTimeMillis() - gameTime) + "ms, Frames: "
+					+ k + ", backProp time: " + (System.currentTimeMillis() - ctime));
+
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -30,7 +37,7 @@ public class Main {
 				e.printStackTrace();
 			}
 			controller.reset();
-			startTime=System.currentTimeMillis();
+			startTime = System.currentTimeMillis();
 			ctime = System.currentTimeMillis();
 		}
 	}

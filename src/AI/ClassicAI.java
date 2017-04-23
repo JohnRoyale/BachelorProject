@@ -76,8 +76,8 @@ public class ClassicAI implements AI {
 			for (Asset enemyAsset : enemy.getAssets()) {
 				if (enemyAsset instanceof Unit) {
 					Unit e = (Unit) enemyAsset;
-					double interceptDistance = Math.abs(e.getX() - a.getX()) + Math.abs(e.getY() - a.getY()); 
-					if (distance >= interceptDistance ) {
+					double interceptDistance = Math.abs(e.getX() - a.getX()) + Math.abs(e.getY() - a.getY());
+					if (distance >= interceptDistance) {
 						cnt++;
 						if (cnt == 1) {
 							// first enemy that can be countered -> new target
@@ -90,15 +90,16 @@ public class ClassicAI implements AI {
 					}
 				}
 			}
-			
-			if (b.getType()=='c' && enemy.archerCount==0) {
-				// if on same square move directly towards target choose path with least enemies
-				action = p.findPath(a.getX(), a.getY(), targetX, targetY, a.getDiameter(),
-						playerID, true,'c');
+
+			if (b.getType() == 'c' && enemy.archerCount == 0) {
+				// if on same square move directly towards target choose path
+				// with least enemies
+				action = p.findPath(a.getX(), a.getY(), targetX, targetY, a.getDiameter(), playerID, true, 'c');
 			} else {
-				// if on same square move directly towards target choose path with most enemies
-				action = p.findPath(a.getX(), a.getY(), targetX, targetY, a.getDiameter(),
-						playerID, false,b.getType());
+				// if on same square move directly towards target choose path
+				// with most enemies
+				action = p.findPath(a.getX(), a.getY(), targetX, targetY, a.getDiameter(), playerID, false,
+						b.getType());
 			}
 
 		}
@@ -115,23 +116,13 @@ public class ClassicAI implements AI {
 		} else {
 			enemy = model.getPlayerList().get(1);
 		}
-		long ctime;
-		// Generate actions maybe add timer to prevent overloading the queue
-		while (true) {
-			ctime = System.currentTimeMillis();
 
-			for (Iterator<Asset> iter = self.getAssets().iterator(); iter.hasNext();) {
-				Asset a = iter.next();
-				this.determineAction(a);
-			}
 
-			try {
-				Thread.sleep(Math.max(20 - (System.currentTimeMillis() - ctime), 0));
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		for (Iterator<Asset> iter = self.getAssets().iterator(); iter.hasNext();) {
+			Asset a = iter.next();
+			this.determineAction(a);
 		}
+
 	}
 
 }
