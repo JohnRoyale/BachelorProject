@@ -31,7 +31,7 @@ public class NeuralNetworkAI implements AI {
 	List<Character> production = Arrays.asList('n', 's', 'a', 'c');
 	NeuralNetwork net;
 	int inputs = 13;
-	int[] size = { inputs, 20, 50, 20, actions.size() };
+	int[] size = { inputs, 50, 100, 50, actions.size() };
 	int range = 1;
 	double gamma = 0.95;
 	double[] input;
@@ -155,7 +155,7 @@ public class NeuralNetworkAI implements AI {
 	}
 
 	public void incChance() {
-		chance += .2;
+		chance += .1;
 		chance = Math.min(90, chance);
 	}
 
