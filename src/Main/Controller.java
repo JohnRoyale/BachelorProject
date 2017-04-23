@@ -84,6 +84,9 @@ public class Controller extends Observable{
 	public boolean gameOver() {
 		return model.gameOver();
 	}
+	public int winner() {
+		return model.getWinner();
+	}
 
 	public void backProp() {
 		if(player1 instanceof NeuralNetworkAI){

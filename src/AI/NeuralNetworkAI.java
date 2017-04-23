@@ -36,7 +36,7 @@ public class NeuralNetworkAI implements AI {
 	double gamma = 0.95;
 	double[] input;
 	double[][] activation;
-	int chance;
+	double chance;
 
 	public NeuralNetworkAI(ConcurrentLinkedQueue<Order> orderQueue, Model m, int player) {
 		playerID = player;
@@ -46,7 +46,7 @@ public class NeuralNetworkAI implements AI {
 		sp = new ShortestPathFinder(m.getLevelMap());
 		net = new NeuralNetwork(size);
 		input = new double[inputs];
-		chance = 1;
+		chance = 0.0;
 	}
 
 	@Override
@@ -136,7 +136,7 @@ public class NeuralNetworkAI implements AI {
 					}
 				}
 
-				if (random.nextInt(100) > chance) {
+				if (random.nextDouble()*100 > chance) {
 					best = random.nextInt(actions.size());
 				}
 
@@ -155,7 +155,7 @@ public class NeuralNetworkAI implements AI {
 	}
 
 	public void incChance() {
-		chance++;
+		chance += .2;
 		chance = Math.min(90, chance);
 	}
 
@@ -187,7 +187,7 @@ public class NeuralNetworkAI implements AI {
 					double[][] activation = net.forwardProp(s.input);
 					double[] expectedOutput = activation[size.length - 1];
 					expectedOutput[s.output] = s.reward + gamma * lastReward;
-
+					lastReward=expectedOutput[s.output];
 					net.backProp(activation, expectedOutput);
 				}
 			}
@@ -201,7 +201,7 @@ public class NeuralNetworkAI implements AI {
 					double[][] activation = net.forwardProp(s.input);
 					double[] expectedOutput = activation[size.length - 1];
 					expectedOutput[s.output] = s.reward + gamma * lastReward;
-
+					lastReward=expectedOutput[s.output];
 					net.backProp(activation, expectedOutput);
 				}
 			}

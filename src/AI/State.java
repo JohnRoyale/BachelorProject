@@ -1,7 +1,7 @@
 package AI;
 
 public class State{
-	int reward;
+	double reward;
 	double[] input;
 	int output;
 	
@@ -11,7 +11,7 @@ public class State{
 		reward=0;
 	}
 	
-	public void incrementReward(int i){
-		reward += i;
+	public void incrementReward(double timeReward){
+		reward += timeReward;
 	}
 }

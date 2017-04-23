@@ -14,12 +14,15 @@ public class Model extends Observable {
 
 	final int damageReward = 2;
 	final int killReward = 50;
-	final int baseKillReward = 1000;
+	final int baseKillReward = 600;
+	final int baseDestroyedReward=-600;
 	final int deathReward= -60;
-	final int timeReward=-1;
+	final double timeReward=-0.5;
 	
 	private ArrayList<Player> playerList;
 	double mapSize;
+	
+	int winner;
 	boolean gameOver = false;
 
 	public Model(String fileName) {
@@ -163,8 +166,16 @@ public class Model extends Observable {
 								((Unit)a).reward(deathReward);
 								u.reward(killReward);
 							}else{
+								winner=u.getOwner();
 								gameOver=true;
 								u.reward(baseKillReward);
+								
+								for (Asset as : p.getAssets()) {
+									if(as instanceof Unit){
+										((Unit)as).reward(baseDestroyedReward);
+									}
+								}
+								
 							}
 							if(u.getState().equals("hunt"))u.setState("idle");
 							
@@ -213,6 +224,10 @@ public class Model extends Observable {
 
 	public boolean gameOver() {
 		return gameOver;
+	}
+	
+	public int getWinner(){
+		return winner;
 	}
 
 	public Map getLevelMap() {

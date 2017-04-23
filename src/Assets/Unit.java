@@ -50,9 +50,9 @@ public abstract class Unit extends Asset {
 		history.add(new State(in,out));
 	}
 	
-	public void reward(int r){
+	public void reward(double timeReward){
 		if(history.size()>0){
-			history.get(history.size()-1).incrementReward(r);
+			history.get(history.size()-1).incrementReward(timeReward);
 		}
 	}
 
@@ -145,7 +145,7 @@ public abstract class Unit extends Asset {
 					a = sp.findPath(this.xCor, this.yCor, (p.baseX / mapSize)+offsetX, (p.baseY / mapSize)+offsetY, this.getDiameter());
 					
 					//a=actions.get(random.nextInt(actions.size()));
-					if(turnCount++ > 1000){
+					if(turnCount++ > 250){
 						state="idle";
 					}
 				}
