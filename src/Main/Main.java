@@ -19,7 +19,7 @@ public class Main {
 			gameTime = System.currentTimeMillis();
 			draw = i % 100 == 0;
 			while (!controller.gameOver() && k < 300 * 50) {
-				if (System.currentTimeMillis() - ctime > 20 || (!draw && controller.queueFull())) {
+				if (((System.currentTimeMillis() - ctime > 20)&& controller.queueFull() )|| (!draw && controller.queueFull())) {
 					draw = System.currentTimeMillis() - ctime > 20 && draw;
 					ctime = System.currentTimeMillis();
 					controller.update(draw);

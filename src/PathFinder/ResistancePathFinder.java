@@ -39,11 +39,10 @@ public class ResistancePathFinder {
 		@Override
 		public int compareTo(Position s) {
 
-			if (this.total > s.total) {
-				if (this.total > s.total + 3)
+			
+			if (this.total > s.total + 3){
 					return 1;
-			} else if (s.total > this.total) {
-				if (s.total > this.total + 3)
+			} else 	if (s.total > this.total + 3){
 					return -1;
 			}
 
@@ -55,7 +54,7 @@ public class ResistancePathFinder {
 			}
 
 			if (value == 0) {
-				return 0;
+				return this.total-s.total;
 			}else if(value>0){
 				return 1;
 			}else{

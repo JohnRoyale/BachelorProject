@@ -17,7 +17,7 @@ public class Model extends Observable {
 	final int baseKillReward = 600;
 	final int baseDestroyedReward=-600;
 	final int deathReward= -60;
-	final double timeReward=-0.5;
+	final double timeReward=1;
 	
 	private ArrayList<Player> playerList;
 	double mapSize;

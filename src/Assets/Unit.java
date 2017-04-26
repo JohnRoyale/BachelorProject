@@ -24,7 +24,9 @@ public abstract class Unit extends Asset {
 	Random random;
 	int kills;
 	int turnsAlive;
+	int attackedCooldown;
 	Player p;
+	
 	ArrayList<State> history;
 	
 	
@@ -42,6 +44,7 @@ public abstract class Unit extends Asset {
 		this.speed = d;
 		state = "idle";
 		turnCount=0;
+		attackedCooldown=0;
 		history=new ArrayList<State>();
 		random=new Random(System.currentTimeMillis());
 	}
@@ -54,6 +57,11 @@ public abstract class Unit extends Asset {
 		if(history.size()>0){
 			history.get(history.size()-1).incrementReward(timeReward);
 		}
+	}
+	
+	public void damage(int hit) {
+		hitPoints -= hit;
+		attackedCooldown=25;
 	}
 
 	public int getAttackPower() {
@@ -89,7 +97,10 @@ public abstract class Unit extends Asset {
 	}
 
 	public double getSpeed() {
-		return speed;
+		attackedCooldown=Math.max(attackedCooldown-1,0);
+		if(attackedCooldown==0)
+			return speed;
+		return speed/2;
 	}
 
 	public String getState() {
@@ -145,7 +156,7 @@ public abstract class Unit extends Asset {
 					a = sp.findPath(this.xCor, this.yCor, (p.baseX / mapSize)+offsetX, (p.baseY / mapSize)+offsetY, this.getDiameter());
 					
 					//a=actions.get(random.nextInt(actions.size()));
-					if(turnCount++ > 250){
+					if(turnCount++ > 100){
 						state="idle";
 					}
 				}
