@@ -1,6 +1,7 @@
 package Main;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class Main {
 
@@ -19,7 +20,7 @@ public class Main {
 			gameTime = System.currentTimeMillis();
 			draw = i % 100 == 0;
 			while (!controller.gameOver() && k < 300 * 50) {
-				if (((System.currentTimeMillis() - ctime > 20)&& controller.queueFull() )|| (!draw && controller.queueFull())) {
+				if ((System.currentTimeMillis() - ctime > 20)|| (!draw && controller.queueFull())) {
 					draw = System.currentTimeMillis() - ctime > 20 && draw;
 					ctime = System.currentTimeMillis();
 					controller.update(draw);
@@ -27,17 +28,17 @@ public class Main {
 				}
 			}
 			ctime = System.currentTimeMillis();
-			controller.backProp();
+			try {
+				controller.backProp(draw);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			System.out.println("Epoch: " + i + ", Round time: " + (System.currentTimeMillis() - gameTime) + "ms, Frames: "
 					+ k + ", backProp time: " + (System.currentTimeMillis() - ctime)+", Player "+ controller.winner()+" won");
 			wins += controller.winner() -1;
 			System.out.println("Neural AI won "+ wins+ "/"+j+" last games\n");
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
 			controller.reset();
 			startTime = System.currentTimeMillis();
 			ctime = System.currentTimeMillis();

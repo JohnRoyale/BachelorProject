@@ -17,7 +17,7 @@ public class RandomBehaviourAI implements AI {
 	int playerID;
 	int enemy;
 	ConcurrentLinkedQueue<Order> orderQueue;
-
+	Random random = new Random(System.currentTimeMillis());
 	ResistancePathFinder p;
 	ShortestPathFinder sp;
 	List<String> actions = Arrays.asList("defendBase", "defensiveInvade", "evasiveInvade", "hunt");
@@ -37,7 +37,7 @@ public class RandomBehaviourAI implements AI {
 	}
 
 	public void determineAction(Asset a) {
-		Random random = new Random();
+		
 		char action = 'n';
 		if (a instanceof Building) {
 			Building b = (Building) a;

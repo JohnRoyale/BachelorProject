@@ -1,26 +1,39 @@
 package Neural;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
 
-public class NeuralNetwork {
-	static double[][][] weights;
-	static double[][][] dWeights;
-	static int[] size;
-	static double[][] activation;
-	static double startingLearningRate = 0.4;
-	static double minLearningRate=0.1;
-	static double degration = 0.9;
-	static double momentum =0.0;
-	static double bias = -1;
+public class NeuralNetwork implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -664522815884100314L;
+	
+	 double[][][] weights;
+	 double[][][] dWeights;
+	 int[] size;
+	 double[][] activation;
+	 double startingLearningRate = 0.4;
+	 double minLearningRate=0.1;
+	 double degration = 0.9;
+	 double momentum =0.0;
+	 double bias = -1;
+	 double chance;
 	
 	
 	public NeuralNetwork(int[] size){
 		this.size=size;
 		activation=new double[size.length][];
-		
 		init();
 	}
+	public void setChance(double d){
+		chance=d;
+	}
+	public double getChance(){
+		return chance;
+	}
+	
 	
 	private void init(){
 		weights = new double[size.length - 1][][];
@@ -117,6 +130,17 @@ public class NeuralNetwork {
 			}
 		}
 
+	}
+	
+	public boolean sameSize(int[] os){
+		
+		if(size.length != os.length)return false;
+		
+		for(int i=0;i<os.length;i++){
+			if(os[i]!=size[i])return false;
+		}
+		
+		return true;
 	}
 	
 	

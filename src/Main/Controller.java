@@ -1,17 +1,18 @@
 package Main;
 
 import java.awt.BorderLayout;
+import java.io.IOException;
 import java.util.Observable;
+import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-
 import AI.*;
 import Assets.*;
 
-public class Controller extends Observable{
+public class Controller extends Observable {
 	private AI player1, player2;
 	private Model model;
 	private ConcurrentLinkedQueue<Order> orderQueue;
@@ -19,87 +20,94 @@ public class Controller extends Observable{
 	Thread p2;
 	JFrame frame;
 	private View view;
-	
-	public Controller() {
-		model=new Model("map2");
-		model.levelMap.printMap();
-		orderQueue=new ConcurrentLinkedQueue<Order>();
-		player1=new RandomBehaviourAI(orderQueue,model,1);
-		player2=new NeuralNetworkAI(orderQueue,model,2);
-		
-		
+	Random r = new Random(System.currentTimeMillis());
 
-		
-		p1=new Thread(player1);
-		p2=new Thread(player2);
-		
+	public Controller() {
+		model = new Model("map2");
+		model.levelMap.printMap();
+		orderQueue = new ConcurrentLinkedQueue<Order>();
+		player1 = new RandomBehaviourAI(orderQueue, model, 1);
+		player2 = new NeuralNetworkAI(orderQueue, model, 2);
+
+		p1 = new Thread(player1);
+		p2 = new Thread(player2);
+
 		p1.start();
 		p2.start();
-		
-		frame=new JFrame("Game");
+
+		frame = new JFrame("Game");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		JLabel emptyLabel = new JLabel(""); 
+		JLabel emptyLabel = new JLabel("");
 		frame.getContentPane().add(emptyLabel, BorderLayout.CENTER);
-		
-		view=new View(model);
+
+		view = new View(model);
 		this.addObserver(view);
-		
+
 		frame.add(view);
-		//frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		// frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.pack();
 		frame.setSize(1024, 1000);
 		frame.setVisible(true);
-		
+
 		this.setChanged();
 		this.notifyObservers();
-		
+
 		this.update(true);
 	}
 
-	public void addOrderToQueue(Order o){
+	public void addOrderToQueue(Order o) {
 		orderQueue.add(o);
 	}
-	
-	public void update(boolean draw){
-		int size=orderQueue.size();
-		//System.out.println(size);
-		for(int i=0;i<size;i++){
-			Order o=orderQueue.poll();		
-			if(o.a instanceof Building){
+
+	public void update(boolean draw) {
+		int size = orderQueue.size();
+		// System.out.println(size);
+		for (int i = 0; i < size; i++) {
+			Order o = orderQueue.poll();
+			if (o.a instanceof Building) {
 				model.order((Building) o.a, o.action);
-			}else{
+			} else {
 				model.order((Unit) o.a, o.action);
-				((Unit)o.a).incTurns();
+				((Unit) o.a).incTurns();
 			}
-			if(draw)
+			if (draw) {
 				this.setChanged();
+			}
 		}
-		player1.run();
-		player2.run();
-		if(draw)
+		if (r.nextBoolean()) {
+			player2.run();
+			player1.run();
+		} else {
+			player1.run();
+			player2.run();
+		}
+		if (draw) {
 			this.notifyObservers();
-		
+		}
+
 	}
 
 	public boolean gameOver() {
 		return model.gameOver();
 	}
+
 	public int winner() {
 		return model.getWinner();
 	}
 
-	public void backProp() {
-		if(player1 instanceof NeuralNetworkAI){
-			((NeuralNetworkAI)player1).learn();
-			((NeuralNetworkAI)player1).incChance();
+	public void backProp(boolean b) throws IOException {
+		if (player1 instanceof NeuralNetworkAI) {
+			((NeuralNetworkAI) player1).learn();
+			((NeuralNetworkAI) player1).incChance();
+			if(b)((NeuralNetworkAI) player1).writeToFile();
 		}
-		
-		if(player2 instanceof NeuralNetworkAI){
-			((NeuralNetworkAI)player2).learn();
-			((NeuralNetworkAI)player2).incChance();
+
+		if (player2 instanceof NeuralNetworkAI) {
+			((NeuralNetworkAI) player2).learn();
+			((NeuralNetworkAI) player2).incChance();
+			if(b)((NeuralNetworkAI) player2).writeToFile();
 		}
-		
-		
+
 	}
 
 	public void reset() {
@@ -110,6 +118,7 @@ public class Controller extends Observable{
 	}
 
 	public boolean queueFull() {
-		return orderQueue.size()>=model.getPlayerList().get(1).getAssets().size()+model.getPlayerList().get(2).getAssets().size();
+		return orderQueue.size() >= model.getPlayerList().get(1).getAssets().size()
+				+ model.getPlayerList().get(2).getAssets().size();
 	}
 }
