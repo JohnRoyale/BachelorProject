@@ -4,10 +4,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class Main {
-
+	
+	final static boolean qlearning=true;
+	final static boolean capitalist =true;
+	
+	
 	public static void main(String[] args) {
 
-		Controller controller = new Controller();
+		Controller controller = new Controller(qlearning,capitalist);
 		long startTime = System.currentTimeMillis();
 		long ctime = System.currentTimeMillis();
 		long gameTime;

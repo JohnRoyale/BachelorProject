@@ -12,25 +12,37 @@ public class Model extends Observable {
 
 	Map levelMap;
 
-	final int damageReward = 2;
-	final int killReward = 50;
-	final int baseKillReward = 600;
-	final int baseDestroyedReward=-600;
-	final int deathReward= -60;
-	final double timeReward=1;
-	
+	int damageReward = 2;
+	int killReward = 50;
+	int baseKillReward = 600;
+	int winReward=1000;
+	int baseDestroyedReward=-600;
+	int deathReward= -60;
+	double timeReward=1;
+	boolean capitalist;
 	private ArrayList<Player> playerList;
 	double mapSize;
 	
 	int winner;
 	boolean gameOver = false;
 
-	public Model(String fileName) {
+	public Model(String fileName,boolean c) {
+		capitalist=c;
 		try {
 			levelMap = new Map(fileName);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		
+		if(capitalist){
+			winReward=0;
+		}else{
+			damageReward=0;
+			killReward=0;
+			deathReward=0;
+			timeReward=0;
+		}
+		
 		playerList = new ArrayList<Player>();
 		playerList.add(new Player(0)); // nature
 		playerList.add(new Player(1)); // player 1

@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -45,8 +46,10 @@ public class NeuralNetworkAI implements AI {
 	double[] input;
 	double[][] activation;
 	double chance;
+	boolean qlearning;
 
-	public NeuralNetworkAI(ConcurrentLinkedQueue<Order> orderQueue, Model m, int player) {
+	public NeuralNetworkAI(ConcurrentLinkedQueue<Order> orderQueue, Model m, int player, boolean q) {
+		qlearning=q;
 		playerID = player;
 		this.orderQueue = orderQueue;
 		model = m;
@@ -201,9 +204,14 @@ public class NeuralNetworkAI implements AI {
 		}
 
 	}
-
-	public void learn() {
-		for (Asset a : self.getAssets()) {
+	
+	public void qlearn(){
+		ArrayList<Asset> assets = new ArrayList<Asset>();
+		assets.addAll( self.getAssets());
+		assets.addAll( self.getLostAssets());
+		
+		
+		for (Asset a : assets) {
 			if (a instanceof Unit) {
 				Unit u = (Unit) a;
 				Collections.reverse(u.getHistory());
@@ -217,19 +225,17 @@ public class NeuralNetworkAI implements AI {
 				}
 			}
 		}
-		for (Asset a : self.getLostAssets()) {
-			if (a instanceof Unit) {
-				Unit u = (Unit) a;
-				Collections.reverse(u.getHistory());
-				double lastReward = 0;
-				for (State s : u.getHistory()) {
-					double[][] activation = net.forwardProp(s.input);
-					double[] expectedOutput = activation[size.length - 1];
-					expectedOutput[s.output] = s.reward + gamma * lastReward;
-					lastReward = expectedOutput[s.output];
-					net.backProp(activation, expectedOutput);
-				}
-			}
+	}
+	
+	public void alternativeLearn(){
+		
+	}
+	
+	public void learn() {
+		if(qlearning){
+			qlearn();
+		}else{
+			alternativeLearn();
 		}
 	}
 
