@@ -13,6 +13,7 @@ import Assets.Spearman;
 import Assets.Unit;
 import Main.Model;
 import Main.Order;
+import Main.Player;
 import PathFinder.ResistancePathFinder;
 import PathFinder.ShortestPathFinder;
 
@@ -80,7 +81,53 @@ public class ClassicBehaviourAI implements AI {
 
 				Unit u = (Unit) a;
 				if (u.getState().equals("idle")) {
-					u.setState(actions.get(random.nextInt(actions.size())));
+					Player enemy, owner;
+					owner = model.getPlayerList().get(playerID);
+					if(playerID == 2) {
+						enemy = model.getPlayerList().get(1);
+					} else {
+						enemy = model.getPlayerList().get(2);
+					}
+					
+					int randomFactor = (int)random.nextDouble() * 100;
+					boolean baseDistance = sp.findDistance(u.getX(), u.getY(), owner.baseX / model.getMapSize(), owner.baseY / model.getMapSize(),u.getDiameter()) > 
+										   sp.findDistance(u.getX(), u.getY(), enemy.baseX / model.getMapSize(), enemy.baseY / model.getMapSize(),u.getDiameter());
+								//0 db, 1di, 2ei, 3h
+					switch(u.getType()) {
+					case 's': {
+						//defensebase and defensive invade and hunt
+						if((enemy.cavalryCount * 2) > owner.spearmanCount) {
+							u.setState(actions.get(3));
+						} else if((owner.defenders*5) < enemy.attackers) {
+							u.setState(actions.get(0));
+						} else {
+							u.setState(actions.get(1));
+						}
+						
+					}
+					case 'c': {
+						//hunt + evasive invade + defensive invade
+						if(owner.cavalryCount > enemy.spearmanCount) {
+							u.setState(actions.get(1));
+						} else if(owner.cavalryCount <= enemy.spearmanCount || baseDistance) {
+							u.setState(actions.get(2));
+						} else {
+							u.setState(actions.get(3));
+						}
+					}
+					case 'a': {
+						//hunt + defensive invade + evasive invade
+						if(owner.archerCount <= (enemy.spearmanCount*2)) {
+							u.setState(actions.get(3));
+						} else if(owner.archerCount > enemy.spearmanCount || baseDistance) {
+							u.setState(actions.get(1));
+						} else {
+							u.setState(actions.get(2));
+						}
+					}
+					}
+					
+					
 					
 					/* Add behaviour logic */
 					//If defenders < x defend base && enemy units< Y
