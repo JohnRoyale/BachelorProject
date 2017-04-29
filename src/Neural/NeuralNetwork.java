@@ -8,8 +8,8 @@ public class NeuralNetwork implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -664522815884100314L;
-	
+	 private static final long serialVersionUID = -664522815884100314L;
+	 public String id;
 	 double[][][] weights;
 	 double[][][] dWeights;
 	 int[] size;
@@ -20,18 +20,25 @@ public class NeuralNetwork implements Serializable {
 	 double momentum =0.0;
 	 double bias = -1;
 	 double chance;
+	 int epoch;
 	
 	
-	public NeuralNetwork(int[] size){
+	public NeuralNetwork(int[] size, String name){
+		id=name;
 		this.size=size;
 		activation=new double[size.length][];
 		init();
 	}
-	public void setChance(double d){
+	public void setVariables(double d, int e){
 		chance=d;
+		epoch=e;
 	}
 	public double getChance(){
 		return chance;
+	}
+	
+	public int getEpoch(){
+		return epoch;
 	}
 	
 	

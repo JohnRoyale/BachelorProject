@@ -42,13 +42,14 @@ public class NeuralNetworkAI implements AI {
 	int[] size = { inputs, 100, 50, actions.size() };
 	int range = 2;
 	double gamma = 0.95;
-	double chanceInc = 0.01;
+	double chanceInc = 0.02;
 	double[] input;
 	double[][] activation;
 	double chance;
 	boolean qlearning;
+	File dir;
 
-	public NeuralNetworkAI(ConcurrentLinkedQueue<Order> orderQueue, Model m, int player, boolean q) {
+	public NeuralNetworkAI(ConcurrentLinkedQueue<Order> orderQueue, Model m, int player, boolean q, String file) {
 		qlearning=q;
 		playerID = player;
 		this.orderQueue = orderQueue;
@@ -56,20 +57,24 @@ public class NeuralNetworkAI implements AI {
 		p = new ResistancePathFinder(m);
 		sp = new ShortestPathFinder(m.getLevelMap());
 
-		if (new File("neuralnet").exists()) {
+		dir = new File("NeuralNetworks");
+		dir.mkdirs();
+		
+		if (new File(dir,file).exists()) {
 			try {
-				readFromFile();
+				readFromFile(file);
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}
 		}
-		chance = 0.0;
 		if (net == null) {
 			System.out.println("test");
-			net = new NeuralNetwork(size);
+			net = new NeuralNetwork(size,file);
+			chance = 0.0;
 		} else if (!net.sameSize(size)) {
 			System.out.println("test");
-			net = new NeuralNetwork(size);
+			net = new NeuralNetwork(size,file);
+			chance = 0.0;
 		}else{
 			chance=net.getChance();
 		}
@@ -239,21 +244,27 @@ public class NeuralNetworkAI implements AI {
 		}
 	}
 
-	public void writeToFile() throws IOException {
-		net.setChance(chance);
-		File f = new File("neuralnet");
+	public void writeToFile(int e) throws IOException {
+		net.setVariables(chance,e);
+		File f = new File(dir,net.id + e);
+		System.out.println(net.getChance());
 		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f));
 		oos.writeObject(net);
 		oos.flush();
 		oos.close();
 	}
 
-	public void readFromFile() throws IOException, ClassNotFoundException {
-		File f = new File("neuralnet");
-		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f));
+	public void readFromFile(String fileName) throws IOException, ClassNotFoundException {
+		File f =new File(dir,fileName);
+		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f.getAbsoluteFile()));
 		Object obj = ois.readObject();
 		net=(NeuralNetwork) obj;
+		this.chance=net.getChance();
 		ois.close();
+	}
+
+	public int getEpoch() {
+		return net.getEpoch();
 	}
 
 }

@@ -3,6 +3,8 @@ package Main;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
+
 public class Main {
 	
 	final static boolean qlearning=true;
@@ -10,8 +12,8 @@ public class Main {
 	
 	
 	public static void main(String[] args) {
-
-		Controller controller = new Controller(qlearning,capitalist);
+		String fileName=JOptionPane.showInputDialog("Input file to load neural network from");
+		Controller controller = new Controller(qlearning,capitalist,fileName);
 		long startTime = System.currentTimeMillis();
 		long ctime = System.currentTimeMillis();
 		long gameTime;
@@ -19,10 +21,12 @@ public class Main {
 		boolean draw;
 
 		int j=1;
-		for (int i = 0; i < Integer.MAX_VALUE; i++) {
+		for (int i = controller.getEpoch(); i < Integer.MAX_VALUE; i++) {
 			int k = 0;
 			gameTime = System.currentTimeMillis();
 			draw = i % 100 == 0;
+			
+			
 			while (!controller.gameOver() && k < 300 * 50) {
 				if ((System.currentTimeMillis() - ctime > 20)|| (!draw && controller.queueFull())) {
 					draw = System.currentTimeMillis() - ctime > 20 && draw;
@@ -33,7 +37,7 @@ public class Main {
 			}
 			ctime = System.currentTimeMillis();
 			try {
-				controller.backProp(draw);
+				controller.backProp(draw,i);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

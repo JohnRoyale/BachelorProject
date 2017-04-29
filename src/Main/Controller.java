@@ -22,13 +22,13 @@ public class Controller extends Observable {
 	private View view;
 	Random r = new Random(System.currentTimeMillis());
 
-	public Controller(boolean q, boolean c) {
+	public Controller(boolean q, boolean c, String file) {
 		model = new Model("map2",c);
 		model.levelMap.printMap();
 		orderQueue = new ConcurrentLinkedQueue<Order>();
 		//player1 = new RandomBehaviourAI(orderQueue, model, 1);
-		player1 = new ClassicBehaviourAI(orderQueue, model, 1);
-		player2 = new NeuralNetworkAI(orderQueue, model, 2,q);
+		player1 = new RandomBehaviourAI(orderQueue, model, 1);
+		player2 = new NeuralNetworkAI(orderQueue, model, 2,q,file);
 
 		p1 = new Thread(player1);
 		p2 = new Thread(player2);
@@ -96,19 +96,30 @@ public class Controller extends Observable {
 		return model.getWinner();
 	}
 
-	public void backProp(boolean b) throws IOException {
+	public void backProp(boolean b, int epoch) throws IOException {
 		if (player1 instanceof NeuralNetworkAI) {
 			((NeuralNetworkAI) player1).learn();
 			((NeuralNetworkAI) player1).incChance();
-			if(b)((NeuralNetworkAI) player1).writeToFile();
+			if(b)((NeuralNetworkAI) player1).writeToFile(epoch);
 		}
 
 		if (player2 instanceof NeuralNetworkAI) {
 			((NeuralNetworkAI) player2).learn();
 			((NeuralNetworkAI) player2).incChance();
-			if(b)((NeuralNetworkAI) player2).writeToFile();
+			if(b)((NeuralNetworkAI) player2).writeToFile(epoch);
 		}
 
+	}
+	
+	public int getEpoch(){
+		if (player1 instanceof NeuralNetworkAI) {
+			return ((NeuralNetworkAI) player1).getEpoch();
+		}
+
+		if (player2 instanceof NeuralNetworkAI) {
+			return ((NeuralNetworkAI) player2).getEpoch();
+		}
+		return 0;
 	}
 
 	public void reset() {
