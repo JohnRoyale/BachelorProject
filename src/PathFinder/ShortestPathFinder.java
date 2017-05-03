@@ -30,7 +30,10 @@ public class ShortestPathFinder {
 			}
 		}
 		@Override
-		public int compareTo(Position s) {	            
+		public int compareTo(Position s) {	       
+			if(this.total-total==0){
+				return 1-(this.total%2)*2;
+			}
 			return this.total-s.total;
 		}
 	}

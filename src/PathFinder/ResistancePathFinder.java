@@ -54,6 +54,9 @@ public class ResistancePathFinder {
 			}
 
 			if (value == 0) {
+				if(this.total-total==0){
+					return 1-(this.total%2)*2;
+				}
 				return this.total-s.total;
 			}else if(value>0){
 				return 1;

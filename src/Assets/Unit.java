@@ -62,6 +62,9 @@ public abstract class Unit extends Asset {
 	public void damage(int hit) {
 		hitPoints -= hit;
 		attackedCooldown=25;
+		
+		if(state.equals("evasiveInvade"))
+			state="idle";
 	}
 
 	public int getAttackPower() {

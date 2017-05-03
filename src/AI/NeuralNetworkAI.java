@@ -38,11 +38,12 @@ public class NeuralNetworkAI implements AI {
 	List<String> actions = Arrays.asList("defendBase", "defensiveInvade", "evasiveInvade", "hunt");
 	List<Character> production = Arrays.asList('n', 's', 'a', 'c');
 	NeuralNetwork net;
-	int inputs = 13;
-	int[] size = { inputs, 100, 50, actions.size() };
+	int inputs = 14;
+	int[] size = { inputs, 15,8, actions.size() };
 	int range = 2;
 	double gamma = 0.95;
-	double chanceInc = 0.02;
+	double chanceInc = .1;
+	double chanceMax = 95.0;
 	double[] input;
 	double[][] activation;
 	double chance;
@@ -50,7 +51,7 @@ public class NeuralNetworkAI implements AI {
 	File dir;
 
 	public NeuralNetworkAI(ConcurrentLinkedQueue<Order> orderQueue, Model m, int player, boolean q, String file) {
-		qlearning=q;
+		qlearning = q;
 		playerID = player;
 		this.orderQueue = orderQueue;
 		model = m;
@@ -59,24 +60,24 @@ public class NeuralNetworkAI implements AI {
 
 		dir = new File("NeuralNetworks");
 		dir.mkdirs();
-		
-		if (new File(dir,file).exists()) {
+
+		if (new File(dir, file).exists()) {
 			try {
-				readFromFile(file);
+				readFromFile(file,true);
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}
 		}
 		if (net == null) {
-			System.out.println("test");
-			net = new NeuralNetwork(size,file);
-			chance = 0.0;
+			System.out.println("test1");
+			net = new NeuralNetwork(size, file);
+			chance = 90.0;
 		} else if (!net.sameSize(size)) {
-			System.out.println("test");
-			net = new NeuralNetwork(size,file);
-			chance = 0.0;
-		}else{
-			chance=net.getChance();
+			System.out.println("test2");
+			net = new NeuralNetwork(size, file);
+			chance = 90.0;
+		} else {
+			chance = net.getChance();
 		}
 		System.out.println(chance);
 
@@ -144,21 +145,19 @@ public class NeuralNetworkAI implements AI {
 					input[8] = self.attackers;
 					input[9] = self.defenders;
 					input[10] = self.hunters;
-					Player enemy, owner;
-					if (u.getOwner() == 1) {
-						enemy = model.getPlayerList().get(2);
-						owner = model.getPlayerList().get(1);
-					} else {
-						enemy = model.getPlayerList().get(1);
-						owner = model.getPlayerList().get(2);
-					}
 
 					double mapsize = model.getMapSize();
-					input[11] = sp.findDistance(u.getX(), u.getY(), owner.baseX / mapsize, owner.baseY / mapsize,
+					input[11] = sp.findDistance(u.getX(), u.getY(), self.baseX / mapsize, self.baseY / mapsize,
 							u.getDiameter());
 					input[12] = sp.findDistance(u.getX(), u.getY(), enemy.baseX / mapsize, enemy.baseY / mapsize,
 							u.getDiameter());
-
+					
+					input[13]=Double.MAX_VALUE;
+					
+					for (Asset as: enemy.getAssets()){
+						input[13]=Math.min(input[13], sp.findDistance(as.getX(), as.getY(), self.baseX / mapsize, self.baseY / mapsize, as.getDiameter()));
+					}
+					
 					activation = net.forwardProp(input);
 
 					double[] output = activation[size.length - 1];
@@ -189,7 +188,7 @@ public class NeuralNetworkAI implements AI {
 
 	public void incChance() {
 		chance += chanceInc;
-		chance = Math.min(99, chance);
+		chance = Math.min(chanceMax, chance);
 	}
 
 	@Override
@@ -209,13 +208,12 @@ public class NeuralNetworkAI implements AI {
 		}
 
 	}
-	
-	public void qlearn(){
+
+	public void qlearn() {
 		ArrayList<Asset> assets = new ArrayList<Asset>();
-		assets.addAll( self.getAssets());
-		assets.addAll( self.getLostAssets());
-		
-		
+		assets.addAll(self.getAssets());
+		assets.addAll(self.getLostAssets());
+
 		for (Asset a : assets) {
 			if (a instanceof Unit) {
 				Unit u = (Unit) a;
@@ -223,30 +221,39 @@ public class NeuralNetworkAI implements AI {
 				double lastReward = 0;
 				for (State s : u.getHistory()) {
 					double[][] activation = net.forwardProp(s.input);
-					double[] expectedOutput = activation[size.length - 1];
+					double[] expectedOutput = activation[size.length - 1].clone();
 					expectedOutput[s.output] = s.reward + gamma * lastReward;
+					
+//					for(int i=0;i<expectedOutput.length;i++){
+//						System.out.println(expectedOutput[s.output]+" "+activation[size.length-1][s.output]);
+//					}
+					
+					
 					lastReward = expectedOutput[s.output];
 					net.backProp(activation, expectedOutput);
 				}
 			}
 		}
 	}
-	
-	public void alternativeLearn(){
-		
+
+	public void alternativeLearn() {
+
 	}
-	
+
 	public void learn() {
-		if(qlearning){
+		if (qlearning) {
 			qlearn();
-		}else{
+		} else {
 			alternativeLearn();
 		}
+		net.degradeRate();
+		//net.printWeights();
 	}
 
 	public void writeToFile(int e) throws IOException {
-		net.setVariables(chance,e);
-		File f = new File(dir,net.id + e);
+		net.setVariables(chance, e);
+		File f = new File(dir, net.id + e);
+		System.out.println("Saved neuralnet to file: "+f.getPath());
 		System.out.println(net.getChance());
 		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f));
 		oos.writeObject(net);
@@ -254,12 +261,17 @@ public class NeuralNetworkAI implements AI {
 		oos.close();
 	}
 
-	public void readFromFile(String fileName) throws IOException, ClassNotFoundException {
-		File f =new File(dir,fileName);
+	public void readFromFile(String fileName, boolean b) throws IOException, ClassNotFoundException {
+		File f = new File(dir, fileName);
 		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f.getAbsoluteFile()));
 		Object obj = ois.readObject();
-		net=(NeuralNetwork) obj;
-		this.chance=net.getChance();
+		System.out.println("Loaded neuralnet from file: "+f.getPath());
+		net = (NeuralNetwork) obj;
+		if (b){
+			this.chance = net.getChance();
+		}else{
+			this.chance=100;
+		}
 		ois.close();
 	}
 

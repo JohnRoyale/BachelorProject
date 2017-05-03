@@ -14,35 +14,41 @@ public class Model extends Observable {
 
 	int damageReward = 2;
 	int killReward = 50;
-	int baseKillReward = 600;
-	int winReward=1000;
-	int baseDestroyedReward=-600;
-	int deathReward= -60;
-	double timeReward=1;
+	int baseKillReward = 1000;
+	int winReward = 2000;
+	int loseReward = 0;
+	int globalKillReward=0;
+	int baseDestroyedReward = -500;
+	int deathReward = -100;
+	double timeReward = -1;
 	boolean capitalist;
 	private ArrayList<Player> playerList;
 	double mapSize;
-	
+
 	int winner;
 	boolean gameOver = false;
 
-	public Model(String fileName,boolean c) {
-		capitalist=c;
+	public Model(String fileName, boolean c) {
+		capitalist = c;
 		try {
 			levelMap = new Map(fileName);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
-		if(capitalist){
-			winReward=0;
-		}else{
-			damageReward=0;
-			killReward=0;
-			deathReward=0;
-			timeReward=0;
+
+		if (capitalist) {
+			winReward = 0;
+			loseReward=0;
+			globalKillReward=0;
+		} else {
+			baseKillReward = 0;
+			baseDestroyedReward=0;
+			damageReward = 0;
+			killReward = 0;
+			deathReward = 0;
+			//timeReward = 0;
 		}
-		
+
 		playerList = new ArrayList<Player>();
 		playerList.add(new Player(0)); // nature
 		playerList.add(new Player(1)); // player 1
@@ -64,8 +70,8 @@ public class Model extends Observable {
 
 		initBase();
 	}
-	
-	private void initBase(){
+
+	private void initBase() {
 		playerList.get(1).addAsset(new Building(1, playerList.get(1).baseX / (float) levelMap.size,
 				playerList.get(1).baseY / (float) levelMap.size, 10, levelMap.size));
 		playerList.get(2).addAsset(new Building(2, playerList.get(2).baseX / (float) levelMap.size,
@@ -162,35 +168,61 @@ public class Model extends Observable {
 						if (a instanceof Unit && ((Unit) a).getType() == u.getCounter()) {
 							damage = (int) Math.round(damage * 1.5);
 						}
-						
-						if(u.getCoolDown() == 0) {
+
+						if (u.getCoolDown() == 0) {
 							a.damage(damage);
 							u.setCoolDown(u.getAttackSpeed());
-							u.reward(damage*damageReward);
+							u.reward(damage * damageReward);
 						} else {
-							u.setCoolDown(u.getCoolDown()-1);
+							u.setCoolDown(u.getCoolDown() - 1);
 						}
-						
+
 						if (a.getHitPoints() <= 0) {
 							u.incKills();
-							
-							if(a instanceof Unit){
-								((Unit)a).reward(deathReward);
-								u.reward(killReward);
-							}else{
-								winner=u.getOwner();
-								gameOver=true;
-								u.reward(baseKillReward);
-								
-								for (Asset as : p.getAssets()) {
+
+							if (a instanceof Unit) {
+								for(Asset as:playerList.get(u.getOwner()).getAssets()){
 									if(as instanceof Unit){
-										((Unit)as).reward(baseDestroyedReward);
+										((Unit)as).reward(globalKillReward);
 									}
 								}
+								((Unit) a).reward(deathReward);
+								u.reward(killReward);
+							} else {
+								winner = u.getOwner();
+								gameOver = true;
+
+								u.reward(baseKillReward);
 								
+								Player win= playerList.get(winner);
+								
+								for (Asset as : win.getAssets()) {
+									if (as instanceof Unit) {
+										((Unit) as).reward(winReward);
+									}
+								}
+//								for (Asset as : win.getLostAssets()) {
+//									if (as instanceof Unit) {
+//										((Unit) as).reward(winReward);
+//									}
+//								}
+
+								for (Asset as : p.getAssets()) {
+									if (as instanceof Unit) {
+										((Unit) as).reward(loseReward);
+										((Unit) as).reward(baseDestroyedReward);
+									}
+								}
+//								for (Asset as : p.getLostAssets()) {
+//									if (as instanceof Unit) {
+//										((Unit) as).reward(loseReward);
+//									}
+//								}
+
 							}
-							if(u.getState().equals("hunt"))u.setState("idle");
-							
+							if (u.getState().equals("hunt"))
+								u.setState("idle");
+
 							p.getLostAssets().add(a);
 							p.getAssets().remove(a);
 						}
@@ -207,19 +239,19 @@ public class Model extends Observable {
 			for (Asset a : p.getAssets()) {
 				if ((int) (a.getX() * mapSize) == x && (int) (a.getY() * mapSize) == y) {
 					if (p.playerId != playerID) {
-						if(a instanceof Unit){
-							Unit u=(Unit) a;
-							if(type== 'a' && u.getType()=='s'){
-								resistance +=.5;
-							}else if(type== 's' && u.getType()=='c'){
-								resistance +=.5;
-							}else if(type== 'c' && u.getType()=='a'){
-								resistance +=.5;
-							}else{
+						if (a instanceof Unit) {
+							Unit u = (Unit) a;
+							if (type == 'a' && u.getType() == 's') {
+								resistance += .5;
+							} else if (type == 's' && u.getType() == 'c') {
+								resistance += .5;
+							} else if (type == 'c' && u.getType() == 'a') {
+								resistance += .5;
+							} else {
 								resistance++;
 							}
 						}
-					}else{
+					} else {
 						resistance--;
 					}
 				}
@@ -237,8 +269,8 @@ public class Model extends Observable {
 	public boolean gameOver() {
 		return gameOver;
 	}
-	
-	public int getWinner(){
+
+	public int getWinner() {
 		return winner;
 	}
 
@@ -255,13 +287,13 @@ public class Model extends Observable {
 	}
 
 	public void reset() {
-		gameOver=false;
-		
-		for(Player p:playerList){
+		gameOver = false;
+		winner = 0;
+		for (Player p : playerList) {
 			p.getAssets().clear();
 			p.getLostAssets().clear();
 		}
 		initBase();
-		
+
 	}
 }

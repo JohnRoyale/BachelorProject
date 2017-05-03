@@ -1,6 +1,7 @@
 package Main;
 
 import java.awt.BorderLayout;
+import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Random;
@@ -23,12 +24,12 @@ public class Controller extends Observable {
 	Random r = new Random(System.currentTimeMillis());
 
 	public Controller(boolean q, boolean c, String file) {
-		model = new Model("map2",c);
+		model = new Model("map2", c);
 		model.levelMap.printMap();
 		orderQueue = new ConcurrentLinkedQueue<Order>();
-		//player1 = new RandomBehaviourAI(orderQueue, model, 1);
+		// player1 = new RandomBehaviourAI(orderQueue, model, 1);
 		player1 = new RandomBehaviourAI(orderQueue, model, 1);
-		player2 = new NeuralNetworkAI(orderQueue, model, 2,q,file);
+		player2 = new NeuralNetworkAI(orderQueue, model, 2, q, file);
 
 		p1 = new Thread(player1);
 		p2 = new Thread(player2);
@@ -98,20 +99,22 @@ public class Controller extends Observable {
 
 	public void backProp(boolean b, int epoch) throws IOException {
 		if (player1 instanceof NeuralNetworkAI) {
+			if (b)
+				((NeuralNetworkAI) player1).writeToFile(epoch);
 			((NeuralNetworkAI) player1).learn();
 			((NeuralNetworkAI) player1).incChance();
-			if(b)((NeuralNetworkAI) player1).writeToFile(epoch);
 		}
 
 		if (player2 instanceof NeuralNetworkAI) {
+			if (b)
+				((NeuralNetworkAI) player2).writeToFile(epoch);
 			((NeuralNetworkAI) player2).learn();
 			((NeuralNetworkAI) player2).incChance();
-			if(b)((NeuralNetworkAI) player2).writeToFile(epoch);
 		}
 
 	}
-	
-	public int getEpoch(){
+
+	public int getEpoch() {
 		if (player1 instanceof NeuralNetworkAI) {
 			return ((NeuralNetworkAI) player1).getEpoch();
 		}
@@ -132,5 +135,31 @@ public class Controller extends Observable {
 	public boolean queueFull() {
 		return orderQueue.size() >= model.getPlayerList().get(1).getAssets().size()
 				+ model.getPlayerList().get(2).getAssets().size();
+	}
+
+	public boolean load(String name) {
+		// TODO Auto-generated method stub
+		File dir = new File("NeuralNetworks");
+
+		if (new File(dir, name).exists()) {
+
+			try {
+				if (player1 instanceof NeuralNetworkAI) {
+					((NeuralNetworkAI) player1).readFromFile(name,false);
+					
+				}
+				if (player2 instanceof NeuralNetworkAI) {
+					((NeuralNetworkAI) player2).readFromFile(name,false);
+					
+				}
+			} catch (ClassNotFoundException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			};
+
+			return true;
+		}
+
+		return false;
 	}
 }
