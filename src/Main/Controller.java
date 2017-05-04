@@ -28,7 +28,7 @@ public class Controller extends Observable {
 		model.levelMap.printMap();
 		orderQueue = new ConcurrentLinkedQueue<Order>();
 		// player1 = new RandomBehaviourAI(orderQueue, model, 1);
-		player1 = new RandomBehaviourAI(orderQueue, model, 1);
+		player1 = new ClassicBehaviourAI(orderQueue, model, 1);
 		player2 = new NeuralNetworkAI(orderQueue, model, 2, q, file);
 
 		p1 = new Thread(player1);

@@ -95,18 +95,18 @@ public class ClassicBehaviourAI implements AI {
 								//0 db, 1di, 2ei, 3h
 					switch(u.getType()) {
 					case 's': {
-						//defensebase and defensive invade and hunt
+						//defensebase (10%) and defensive invade (70%) and hunt (20%)
 						if(randomFactor > 90) {
-							u.setState(actions.get(0));
+							u.setState(actions.get(0)); 
 						} else if(randomFactor > 70) {
-							u.setState(actions.get(4));
+							u.setState(actions.get(3));
 						} else {
 							u.setState(actions.get(1));
 						}
 						
 					}
 					case 'c': {
-						//hunt + evasive invade + defensive invade
+						//hunt(30%) + evasive invade (10%) + defensive invade (70%)
 						if(randomFactor > 90) {
 							u.setState(actions.get(2));
 						} else if(randomFactor > 70) {
@@ -116,13 +116,13 @@ public class ClassicBehaviourAI implements AI {
 						}
 					}
 					case 'a': {
-						//hunt + defensive invade + evasive invade
+						//hunt(40%) + defendbase(10%) + defensiveinvade(50%) (
 						if(randomFactor > 90) {
 							u.setState(actions.get(0));
 						} else if(randomFactor > 50) {
-							u.setState(actions.get(4));
+							u.setState(actions.get(3));
 						} else {
-							u.setState(actions.get(2));
+							u.setState(actions.get(1));
 						}
 					}
 					}
