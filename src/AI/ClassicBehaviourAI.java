@@ -96,10 +96,10 @@ public class ClassicBehaviourAI implements AI {
 					switch(u.getType()) {
 					case 's': {
 						//defensebase and defensive invade and hunt
-						if((enemy.cavalryCount * 2) > owner.spearmanCount) {
-							u.setState(actions.get(3));
-						} else if((owner.defenders*5) < enemy.attackers) {
+						if(randomFactor > 90) {
 							u.setState(actions.get(0));
+						} else if(randomFactor > 70) {
+							u.setState(actions.get(4));
 						} else {
 							u.setState(actions.get(1));
 						}
@@ -107,20 +107,20 @@ public class ClassicBehaviourAI implements AI {
 					}
 					case 'c': {
 						//hunt + evasive invade + defensive invade
-						if(owner.cavalryCount > enemy.spearmanCount) {
-							u.setState(actions.get(1));
-						} else if(owner.cavalryCount <= enemy.spearmanCount || baseDistance) {
+						if(randomFactor > 90) {
 							u.setState(actions.get(2));
-						} else {
+						} else if(randomFactor > 70) {
 							u.setState(actions.get(3));
+						} else {
+							u.setState(actions.get(1));
 						}
 					}
 					case 'a': {
 						//hunt + defensive invade + evasive invade
-						if(owner.archerCount <= (enemy.spearmanCount*2)) {
-							u.setState(actions.get(3));
-						} else if(owner.archerCount > enemy.spearmanCount || baseDistance) {
-							u.setState(actions.get(1));
+						if(randomFactor > 90) {
+							u.setState(actions.get(0));
+						} else if(randomFactor > 50) {
+							u.setState(actions.get(4));
 						} else {
 							u.setState(actions.get(2));
 						}
