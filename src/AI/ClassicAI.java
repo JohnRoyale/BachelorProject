@@ -125,4 +125,10 @@ public class ClassicAI implements AI {
 
 	}
 
+	@Override
+	public void reset() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

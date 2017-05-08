@@ -42,7 +42,7 @@ public class NeuralNetworkAI implements AI {
 	int[] size = { inputs, 15, 8, actions.size() };
 	int range = 2;
 	double gamma = 0.95;
-	double chanceInc = .0;
+	double chanceInc = .02;
 	double chanceMax = 95.0;
 	double[] input;
 	double[][] activation;
@@ -55,7 +55,7 @@ public class NeuralNetworkAI implements AI {
 	int lostLearn;
 
 	public NeuralNetworkAI(ConcurrentLinkedQueue<Order> orderQueue, Model m, int player, boolean q, boolean enabled,
-			String file) {
+			String file) throws IOException {
 		lostLearn = 0;
 		this.enabled = enabled;
 		qlearning = q;
@@ -79,12 +79,15 @@ public class NeuralNetworkAI implements AI {
 			System.out.println("test1");
 			net = new NeuralNetwork(size, file);
 			chance = startChance;
+			this.writeToFile(0);
 		} else if (!net.sameSize(size)) {
 			System.out.println("test2");
 			net = new NeuralNetwork(size, file);
 			chance = startChance;
+			this.writeToFile(0);
 		} else {
 			chance = net.getChance();
+			
 		}
 		System.out.println(chance);
 
@@ -229,6 +232,7 @@ public class NeuralNetworkAI implements AI {
 					if ((((Unit) self.getLostAssets().get(i)).getHistory().size() > 0) && qlearning) {
 						qlearn((Unit) self.getLostAssets().get(i), 0);
 					}
+				lostLearn++;
 			}
 		}
 
@@ -248,7 +252,6 @@ public class NeuralNetworkAI implements AI {
 
 	public void alternativeLearn() {
 		if (enabled) {
-
 			ArrayList<Asset> assets = new ArrayList<Asset>();
 			assets.addAll(self.getAssets());
 			assets.addAll(self.getLostAssets());
@@ -311,6 +314,11 @@ public class NeuralNetworkAI implements AI {
 
 	public int getEpoch() {
 		return net.getEpoch();
+	}
+	
+	@Override
+	public void reset(){
+		lostLearn=0;
 	}
 
 }

@@ -12,12 +12,15 @@ public class Model extends Observable {
 
 	Map levelMap;
 
-	int damageReward = 2;
-	int killReward = 50;
-	int baseKillReward = 1000;
+	// communistic
 	int winReward = 2000;
 	int loseReward = 0;
 	int globalKillReward=0;
+	
+	// Capitalistic
+	int damageReward = 2;
+	int killReward = 50;
+	int baseKillReward = 1000;
 	int baseDestroyedReward = -500;
 	int deathReward = -100;
 	double timeReward = -1;

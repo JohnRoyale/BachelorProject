@@ -1,7 +1,0 @@
-Loaded neuralnet from file: NeuralNetworks\qRand0
-After 0 epochs of training Neural AI won 66 games, drawed 0 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand10
-After 10 epochs of training Neural AI won 66 games, drawed 0 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand20
-After 20 epochs of training Neural AI won 65 games, drawed 1 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand30

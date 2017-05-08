@@ -29,8 +29,15 @@ public class Controller extends Observable {
 		orderQueue = new ConcurrentLinkedQueue<Order>();
 		// player1 = new RandomBehaviourAI(orderQueue, model, 1);
 		player1 = new RandomBehaviourAI(orderQueue, model, 1);
-		player2 = new NeuralNetworkAI(orderQueue, model, 2, q,e, file);
+		try {
+			player2 = new NeuralNetworkAI(orderQueue, model, 2, q,e, file);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 
+		
 		p1 = new Thread(player1);
 		p2 = new Thread(player2);
 
@@ -122,12 +129,15 @@ public class Controller extends Observable {
 		if (player2 instanceof NeuralNetworkAI) {
 			return ((NeuralNetworkAI) player2).getEpoch();
 		}
-		return 0;
+		return -1;
 	}
 
 	public void reset() {
 		model.reset();
 		orderQueue.clear();
+		player1.reset();
+		player2.reset();
+		
 		player1.run();
 		player2.run();
 	}
