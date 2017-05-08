@@ -127,10 +127,10 @@ public abstract class Unit extends Asset {
 		
 	
 		while(p.baseX/(double)mapSize+offsetX<0 || p.baseX/(double)mapSize+offsetX>1){
-			offsetX=random.nextDouble()*6/mapSize-1.0*3/mapSize;
+			offsetX=random.nextDouble()*6/mapSize-1.0*2/mapSize;
 		}
 		while(p.baseY/(double)mapSize+offsetY<0 || p.baseY/(double)mapSize+offsetY>1){
-			offsetY=random.nextDouble()*6/mapSize-1.0*3/mapSize;
+			offsetY=random.nextDouble()*6/mapSize-1.0*2/mapSize;
 		}
 		
 		switch (state) {
@@ -150,7 +150,7 @@ public abstract class Unit extends Asset {
 						target=enemyAsset;
 					}
 				}
-				if(target != null && minDist*m.getMapSize()<5){
+				if(target != null && minDist*m.getMapSize()<4){
 					//System.out.println("Enemy Close");
 					a = sp.findPath(this.xCor, this.yCor, target.getX(), target.getY(), this.getDiameter());
 					turnCount=0;

@@ -201,11 +201,6 @@ public class Model extends Observable {
 										((Unit) as).reward(winReward);
 									}
 								}
-//								for (Asset as : win.getLostAssets()) {
-//									if (as instanceof Unit) {
-//										((Unit) as).reward(winReward);
-//									}
-//								}
 
 								for (Asset as : p.getAssets()) {
 									if (as instanceof Unit) {
@@ -213,11 +208,6 @@ public class Model extends Observable {
 										((Unit) as).reward(baseDestroyedReward);
 									}
 								}
-//								for (Asset as : p.getLostAssets()) {
-//									if (as instanceof Unit) {
-//										((Unit) as).reward(loseReward);
-//									}
-//								}
 
 							}
 							if (u.getState().equals("hunt"))

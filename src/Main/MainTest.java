@@ -14,7 +14,7 @@ public class MainTest {
 		// TODO Auto-generated method stub
 		String fileName = JOptionPane.showInputDialog("Input file prefix to test");
 		long ctime = System.currentTimeMillis();
-		Controller controller = new Controller(true, true, fileName);
+		Controller controller = new Controller(false, true,false, fileName);
 
 		int postfix = 0;
 		String name = fileName + postfix;
@@ -27,7 +27,7 @@ public class MainTest {
 			for (int i = 0; i < epochs; i++) {
 				int k = 0;
 				while (!controller.gameOver() && k < 90 * 50) {
-					if (controller.queueFull()) {
+					if (controller.queueFull()|| (System.currentTimeMillis() - ctime > 20) ) {
 						ctime = System.currentTimeMillis();
 						controller.update(false);
 						k++;

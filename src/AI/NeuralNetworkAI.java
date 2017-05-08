@@ -39,18 +39,25 @@ public class NeuralNetworkAI implements AI {
 	List<Character> production = Arrays.asList('n', 's', 'a', 'c');
 	NeuralNetwork net;
 	int inputs = 14;
-	int[] size = { inputs, 15,8, actions.size() };
+	int[] size = { inputs, 15, 8, actions.size() };
 	int range = 2;
 	double gamma = 0.95;
-	double chanceInc = .1;
+	double chanceInc = .0;
 	double chanceMax = 95.0;
 	double[] input;
 	double[][] activation;
 	double chance;
+	double startChance = 80;
 	boolean qlearning;
+	boolean enabled;
 	File dir;
 
-	public NeuralNetworkAI(ConcurrentLinkedQueue<Order> orderQueue, Model m, int player, boolean q, String file) {
+	int lostLearn;
+
+	public NeuralNetworkAI(ConcurrentLinkedQueue<Order> orderQueue, Model m, int player, boolean q, boolean enabled,
+			String file) {
+		lostLearn = 0;
+		this.enabled = enabled;
 		qlearning = q;
 		playerID = player;
 		this.orderQueue = orderQueue;
@@ -63,7 +70,7 @@ public class NeuralNetworkAI implements AI {
 
 		if (new File(dir, file).exists()) {
 			try {
-				readFromFile(file,true);
+				readFromFile(file, true);
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}
@@ -71,11 +78,11 @@ public class NeuralNetworkAI implements AI {
 		if (net == null) {
 			System.out.println("test1");
 			net = new NeuralNetwork(size, file);
-			chance = 90.0;
+			chance = startChance;
 		} else if (!net.sameSize(size)) {
 			System.out.println("test2");
 			net = new NeuralNetwork(size, file);
-			chance = 90.0;
+			chance = startChance;
 		} else {
 			chance = net.getChance();
 		}
@@ -115,63 +122,73 @@ public class NeuralNetworkAI implements AI {
 			Unit u = (Unit) a;
 			if (u.getState().equals("idle")) {
 				int best = 0;
-				if (random.nextDouble() * 100 <= chance) {
-					input[0] = u.getHitPoints();
-					if (u.getType() == 's') {
-						input[1] = 1;
-						input[2] = 0;
-						input[3] = 0;
-					} else if (u.getType() == 'a') {
-						input[1] = 0;
-						input[2] = 1;
-						input[3] = 0;
-					} else {
-						input[1] = 0;
-						input[2] = 0;
-						input[3] = 1;
-					}
+				double value = 0;
 
-					input[4] = 0;
-					for (int i = -range; i <= range; i++) {
-						for (int j = -range; j <= range; j++) {
-							input[4] += model.getTileResistance(playerID, (int) (u.getX() * model.getMapSize()) + i,
-									(int) (u.getY() * model.getMapSize()) + j, u.getType());
-						}
-					}
-
-					input[5] = enemy.archerCount;
-					input[6] = enemy.cavalryCount;
-					input[7] = enemy.spearmanCount;
-					input[8] = self.attackers;
-					input[9] = self.defenders;
-					input[10] = self.hunters;
-
-					double mapsize = model.getMapSize();
-					input[11] = sp.findDistance(u.getX(), u.getY(), self.baseX / mapsize, self.baseY / mapsize,
-							u.getDiameter());
-					input[12] = sp.findDistance(u.getX(), u.getY(), enemy.baseX / mapsize, enemy.baseY / mapsize,
-							u.getDiameter());
-					
-					input[13]=Double.MAX_VALUE;
-					
-					for (Asset as: enemy.getAssets()){
-						input[13]=Math.min(input[13], sp.findDistance(as.getX(), as.getY(), self.baseX / mapsize, self.baseY / mapsize, as.getDiameter()));
-					}
-					
-					activation = net.forwardProp(input);
-
-					double[] output = activation[size.length - 1];
-
-					for (int i = 0; i < output.length; i++) {
-						String str = String.format("%1.2f", output[i]) + " ";
-						// System.out.print(str);
-						if (output[i] > output[best]) {
-							best = i;
-						}
-					}
+				input[0] = u.getHitPoints();
+				if (u.getType() == 's') {
+					input[1] = 1;
+					input[2] = 0;
+					input[3] = 0;
+				} else if (u.getType() == 'a') {
+					input[1] = 0;
+					input[2] = 1;
+					input[3] = 0;
 				} else {
+					input[1] = 0;
+					input[2] = 0;
+					input[3] = 1;
+				}
+
+				input[4] = 0;
+				for (int i = -range; i <= range; i++) {
+					for (int j = -range; j <= range; j++) {
+						input[4] += model.getTileResistance(playerID, (int) (u.getX() * model.getMapSize()) + i,
+								(int) (u.getY() * model.getMapSize()) + j, u.getType());
+					}
+				}
+
+				input[5] = enemy.archerCount;
+				input[6] = enemy.cavalryCount;
+				input[7] = enemy.spearmanCount;
+				input[8] = self.attackers;
+				input[9] = self.defenders;
+				input[10] = self.hunters;
+
+				double mapsize = model.getMapSize();
+				input[11] = sp.findDistance(u.getX(), u.getY(), self.baseX / mapsize, self.baseY / mapsize,
+						u.getDiameter());
+				input[12] = sp.findDistance(u.getX(), u.getY(), enemy.baseX / mapsize, enemy.baseY / mapsize,
+						u.getDiameter());
+
+				input[13] = Double.MAX_VALUE;
+
+				for (Asset as : enemy.getAssets()) {
+					input[13] = Math.min(input[13], sp.findDistance(as.getX(), as.getY(), self.baseX / mapsize,
+							self.baseY / mapsize, as.getDiameter()));
+				}
+
+				activation = net.forwardProp(input);
+
+				double[] output = activation[size.length - 1];
+
+				for (int i = 0; i < output.length; i++) {
+					String str = String.format("%1.2f", output[i]) + " ";
+					// System.out.print(str);
+					if (output[i] > output[best]) {
+						best = i;
+						value = output[i];
+					}
+				}
+
+				if (random.nextDouble() * 100 <= chance) {
 					best = random.nextInt(actions.size());
 				}
+
+				if ((u.getHistory().size() > 0) && qlearning) {
+					//System.out.println("value " + value);
+					this.qlearn(u, value);
+				}
+				
 				String s = actions.get(best);
 				// System.out.println(s);
 				u.addState(input, best);
@@ -206,54 +223,71 @@ public class NeuralNetworkAI implements AI {
 			Asset a = iter.next();
 			this.determineAction(a);
 		}
+		if (qlearning) {
+			for (int i = lostLearn; i < self.getLostAssets().size(); i++) {
+				if (self.getLostAssets().get(i) instanceof Unit)
+					if ((((Unit) self.getLostAssets().get(i)).getHistory().size() > 0) && qlearning) {
+						qlearn((Unit) self.getLostAssets().get(i), 0);
+					}
+			}
+		}
 
 	}
 
-	public void qlearn() {
-		ArrayList<Asset> assets = new ArrayList<Asset>();
-		assets.addAll(self.getAssets());
-		assets.addAll(self.getLostAssets());
+	public void qlearn(Unit u, double nextQ) {
+		if (enabled) {
+			State s = u.getHistory().get(u.getHistory().size() - 1);
+			double[][] activation = net.forwardProp(s.input);
+			double[] expectedOutput = activation[size.length - 1].clone();
+			expectedOutput[s.output] = s.reward + gamma * nextQ;
+			// if (nextQ != 0)
+			// System.out.println(expectedOutput[s.output] - s.reward);
+			net.backProp(activation, expectedOutput);
+		}
+	}
 
-		for (Asset a : assets) {
-			if (a instanceof Unit) {
-				Unit u = (Unit) a;
-				Collections.reverse(u.getHistory());
-				double lastReward = 0;
-				for (State s : u.getHistory()) {
-					double[][] activation = net.forwardProp(s.input);
-					double[] expectedOutput = activation[size.length - 1].clone();
-					expectedOutput[s.output] = s.reward + gamma * lastReward;
-					
-//					for(int i=0;i<expectedOutput.length;i++){
-//						System.out.println(expectedOutput[s.output]+" "+activation[size.length-1][s.output]);
-//					}
-					
-					
-					lastReward = expectedOutput[s.output];
-					net.backProp(activation, expectedOutput);
+	public void alternativeLearn() {
+		if (enabled) {
+
+			ArrayList<Asset> assets = new ArrayList<Asset>();
+			assets.addAll(self.getAssets());
+			assets.addAll(self.getLostAssets());
+
+			for (Asset a : assets) {
+				if (a instanceof Unit) {
+					Unit u = (Unit) a;
+					Collections.reverse(u.getHistory());
+					double lastReward = 0;
+					for (State s : u.getHistory()) {
+						double[][] activation = net.forwardProp(s.input);
+						double[] expectedOutput = activation[size.length - 1].clone();
+						expectedOutput[s.output] = s.reward + gamma * lastReward;
+
+						// for(int i=0;i<expectedOutput.length;i++){
+						// System.out.println(expectedOutput[s.output]+"
+						// "+activation[size.length-1][s.output]);
+						// }
+
+						lastReward = expectedOutput[s.output];
+						net.backProp(activation, expectedOutput);
+					}
 				}
 			}
 		}
 	}
 
-	public void alternativeLearn() {
-
-	}
-
 	public void learn() {
-		if (qlearning) {
-			qlearn();
-		} else {
+		if (!qlearning) {
 			alternativeLearn();
 		}
 		net.degradeRate();
-		//net.printWeights();
+		// net.printWeights();
 	}
 
 	public void writeToFile(int e) throws IOException {
 		net.setVariables(chance, e);
 		File f = new File(dir, net.id + e);
-		System.out.println("Saved neuralnet to file: "+f.getPath());
+		System.out.println("Saved neuralnet to file: " + f.getPath());
 		System.out.println(net.getChance());
 		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f));
 		oos.writeObject(net);
@@ -265,12 +299,12 @@ public class NeuralNetworkAI implements AI {
 		File f = new File(dir, fileName);
 		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f.getAbsoluteFile()));
 		Object obj = ois.readObject();
-		System.out.println("Loaded neuralnet from file: "+f.getPath());
+		System.out.println("Loaded neuralnet from file: " + f.getPath());
 		net = (NeuralNetwork) obj;
-		if (b){
+		if (b) {
 			this.chance = net.getChance();
-		}else{
-			this.chance=100;
+		} else {
+			this.chance = 100;
 		}
 		ois.close();
 	}
