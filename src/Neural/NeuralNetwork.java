@@ -15,7 +15,7 @@ public class NeuralNetwork implements Serializable {
 	 int[] size;
 	 double[][] activation;
 	 double startingLearningRate = 0.1;
-	 double minLearningRate=0.0001;
+	 double minLearningRate=0.0005;
 	 double degration = .9;
 	 double momentum =0;
 	 double bias = -1;

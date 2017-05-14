@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 public class Main {
 
 	final static boolean fastForward = true;
-	final static boolean qlearning = false;
+	final static boolean qlearning = true;
 	final static boolean capitalist = true;
 
 	public static void main(String[] args) throws InterruptedException {
@@ -21,10 +21,10 @@ public class Main {
 		boolean draw;
 		long equal = 0;
 		int j = 1;
-		for (int i = controller.getEpoch()+1; i < 500; i++) {
+		for (int i = controller.getEpoch()+1; i < 100000; i++) {
 			int k = 0;
 			gameTime = System.currentTimeMillis();
-			draw = ((i-1) % 10) == 0;
+			draw = ((i-1) % 100) == 0;
 
 			while (!controller.gameOver() && k < 90 * 50) {
 				if ((System.currentTimeMillis() - ctime > 20) || (controller.queueFull() && (!draw || fastForward))) {
@@ -59,7 +59,7 @@ public class Main {
 			// Thread.sleep(1000);
 			ctime = System.currentTimeMillis();
 			j++;
-			if (j > 10) {
+			if (j > 100) {
 				j = 1;
 				equal = 0;
 				wins = 0;

@@ -2,14 +2,13 @@ package Main;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 
 import javax.swing.JOptionPane;
 
 public class MainTest {
 	final static int epochs = 100;
-	final static int inc = 10;
+	final static int inc = 100;
 
 	public static void main(String[] args) throws FileNotFoundException {
 		// TODO Auto-generated method stub
@@ -18,7 +17,7 @@ public class MainTest {
 		long ctime = System.currentTimeMillis();
 		Controller controller = new Controller(false, true, false, fileName);
 
-		int postfix = 0;
+		int postfix = 1;
 		String name = fileName + postfix;
 		PrintStream stdout = System.out;
 		PrintStream out = new PrintStream(new FileOutputStream(fileName
@@ -30,12 +29,11 @@ public class MainTest {
 			for (int i = 0; i < epochs; i++) {
 				int k = 0;
 				while (!controller.gameOver() && k < 90 * 50) {
-					if (controller.queueFull()
-							|| (System.currentTimeMillis() - ctime > 20)) {
+					if (controller.queueFull() || (System.currentTimeMillis() - ctime > 20)) {
 						ctime = System.currentTimeMillis();
 						controller.update(false);
 						k++;
-						// System.out.print(k+" ");
+						//System.out.print(k+" ");
 					}
 				}
 				if (controller.winner() == 0) {
@@ -43,8 +41,8 @@ public class MainTest {
 				} else {
 					j += controller.winner() - 1;
 				}
-				// if ((i+1) % 10 == 0)
-				// System.out.println(j + "/" + (i + 1));
+				if ((i+1) % 10 == 0)
+				 System.out.println(j + "/" + (i + 1)+" ");
 				controller.reset();
 				// System.out.print(i);
 			}
