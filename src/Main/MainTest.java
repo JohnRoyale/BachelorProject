@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 
 public class MainTest {
 	final static int epochs = 100;
-	final static int inc = 100;
+	final static int inc = 10;
 
 	public static void main(String[] args) throws FileNotFoundException {
 		// TODO Auto-generated method stub
@@ -17,7 +17,7 @@ public class MainTest {
 		long ctime = System.currentTimeMillis();
 		Controller controller = new Controller(false, true, false, fileName);
 
-		int postfix = 1;
+		int postfix = 0;
 		String name = fileName + postfix;
 		PrintStream stdout = System.out;
 		PrintStream out = new PrintStream(new FileOutputStream(fileName
@@ -41,8 +41,8 @@ public class MainTest {
 				} else {
 					j += controller.winner() - 1;
 				}
-				if ((i+1) % 10 == 0)
-				 System.out.println(j + "/" + (i + 1)+" ");
+//				if ((i+1) % 10 == 0)
+//				 System.out.println(j + "/" + (i + 1)+" ");
 				controller.reset();
 				// System.out.print(i);
 			}
@@ -52,11 +52,8 @@ public class MainTest {
 					+ " games, drawed " + equal + " games out of " + epochs
 					+ " games");
 			// System.setOut(stdout);
-			if (postfix == 0) {
-				postfix++;
-			} else {
-				postfix += inc;
-			}
+			postfix += inc;
+			
 			name = fileName + postfix;
 		}
 		System.exit(0);

@@ -1,4 +1,0 @@
-Loaded neuralnet from file: NeuralNetworks\qtest1
-7/10 
-16/20 
-25/30 

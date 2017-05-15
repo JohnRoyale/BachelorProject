@@ -1,0 +1,40 @@
+Loaded neuralnet from file: NeuralNetworks\monteRand0
+After 0 epochs of training Neural AI won 36 games, drawed 0 games out of 100 games
+Loaded neuralnet from file: NeuralNetworks\monteRand10
+After 10 epochs of training Neural AI won 36 games, drawed 0 games out of 100 games
+Loaded neuralnet from file: NeuralNetworks\monteRand20
+After 20 epochs of training Neural AI won 91 games, drawed 6 games out of 100 games
+Loaded neuralnet from file: NeuralNetworks\monteRand30
+After 30 epochs of training Neural AI won 24 games, drawed 0 games out of 100 games
+Loaded neuralnet from file: NeuralNetworks\monteRand40
+After 40 epochs of training Neural AI won 18 games, drawed 0 games out of 100 games
+Loaded neuralnet from file: NeuralNetworks\monteRand50
+After 50 epochs of training Neural AI won 84 games, drawed 15 games out of 100 games
+Loaded neuralnet from file: NeuralNetworks\monteRand60
+After 60 epochs of training Neural AI won 91 games, drawed 7 games out of 100 games
+Loaded neuralnet from file: NeuralNetworks\monteRand70
+After 70 epochs of training Neural AI won 92 games, drawed 8 games out of 100 games
+Loaded neuralnet from file: NeuralNetworks\monteRand80
+After 80 epochs of training Neural AI won 90 games, drawed 7 games out of 100 games
+Loaded neuralnet from file: NeuralNetworks\monteRand90
+After 90 epochs of training Neural AI won 91 games, drawed 8 games out of 100 games
+Loaded neuralnet from file: NeuralNetworks\monteRand100
+After 100 epochs of training Neural AI won 94 games, drawed 5 games out of 100 games
+Loaded neuralnet from file: NeuralNetworks\monteRand110
+After 110 epochs of training Neural AI won 88 games, drawed 10 games out of 100 games
+Loaded neuralnet from file: NeuralNetworks\monteRand120
+After 120 epochs of training Neural AI won 91 games, drawed 8 games out of 100 games
+Loaded neuralnet from file: NeuralNetworks\monteRand130
+After 130 epochs of training Neural AI won 84 games, drawed 14 games out of 100 games
+Loaded neuralnet from file: NeuralNetworks\monteRand140
+After 140 epochs of training Neural AI won 89 games, drawed 10 games out of 100 games
+Loaded neuralnet from file: NeuralNetworks\monteRand150
+After 150 epochs of training Neural AI won 89 games, drawed 9 games out of 100 games
+Loaded neuralnet from file: NeuralNetworks\monteRand160
+After 160 epochs of training Neural AI won 88 games, drawed 8 games out of 100 games
+Loaded neuralnet from file: NeuralNetworks\monteRand170
+After 170 epochs of training Neural AI won 93 games, drawed 4 games out of 100 games
+Loaded neuralnet from file: NeuralNetworks\monteRand180
+After 180 epochs of training Neural AI won 89 games, drawed 9 games out of 100 games
+Loaded neuralnet from file: NeuralNetworks\monteRand190
+After 190 epochs of training Neural AI won 91 games, drawed 9 games out of 100 games

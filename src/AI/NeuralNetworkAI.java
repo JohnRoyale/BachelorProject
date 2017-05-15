@@ -42,8 +42,8 @@ public class NeuralNetworkAI implements AI {
 	int[] size = { inputs, 15, 8, actions.size() };
 	int range = 2;
 	double gamma = 0.95;
-	double chanceInc = 0.02;
-	double chanceMax = 99.0;
+	double chanceInc = 0.1;
+	double chanceMax = 95.0;
 	double[] input;
 	double[][] activation;
 	double chance;
@@ -51,9 +51,10 @@ public class NeuralNetworkAI implements AI {
 	boolean enabled;
 	File dir;
 
-	public NeuralNetworkAI(ConcurrentLinkedQueue<Order> orderQueue, Model m, int player, boolean q,boolean en, String file) {
+	public NeuralNetworkAI(ConcurrentLinkedQueue<Order> orderQueue, Model m, int player, boolean q, boolean en,
+			String file) {
 		qlearning = q;
-		enabled=en;
+		enabled = en;
 		playerID = player;
 		this.orderQueue = orderQueue;
 		model = m;
@@ -73,7 +74,7 @@ public class NeuralNetworkAI implements AI {
 		if (net == null) {
 			System.out.println("test1");
 			net = new NeuralNetwork(size, file);
-			chance = 0.0;
+			chance = 90.0;
 			try {
 				this.writeToFile(0);
 			} catch (IOException e) {
@@ -83,7 +84,7 @@ public class NeuralNetworkAI implements AI {
 		} else if (!net.sameSize(size)) {
 			System.out.println("test2");
 			net = new NeuralNetwork(size, file);
-			chance = 0.0;
+			chance = 90.0;
 			try {
 				this.writeToFile(0);
 			} catch (IOException e) {
@@ -232,42 +233,46 @@ public class NeuralNetworkAI implements AI {
 		for (Asset a : assets) {
 			if (a instanceof Unit) {
 				Unit u = (Unit) a;
-				if(u.getHistory().size()==0)continue;
+				if (u.getHistory().size() == 0)
+					continue;
 				State s = u.getHistory().get(0);
-				State next=null;
-				
+				State next = null;
+
 				double[][] activation;
 				double[] expectedOutput;
 				double[] nextExpected;
-				
+
 				double max;
-				
+
 				for (int i = 0; i < u.getHistory().size(); i++) {
 					if (i + 1 < u.getHistory().size()) {
 						next = u.getHistory().get(i);
 						activation = net.forwardProp(next.input);
 						nextExpected = activation[size.length - 1].clone();
 						max = Double.NEGATIVE_INFINITY;
-						for (int j = 0; i < nextExpected.length; i++) {
+						for (int j = 0; j < nextExpected.length; j++) {
 							String str = String.format("%1.2f", nextExpected[j]) + " ";
-							// System.out.print(str);
+							// System.out.print(nextExpected[j]);
 							if (nextExpected[j] > max) {
 								max = nextExpected[j];
 							}
 						}
-					}else{
-						max=0;
+					} else {
+						max = 0;
 					}
 					activation = net.forwardProp(s.input);
 					expectedOutput = activation[size.length - 1].clone();
 					expectedOutput[s.output] = s.reward + gamma * max;
 
-					// for(int i=0;i<expectedOutput.length;i++){
 					// System.out.println(expectedOutput[s.output]+"
 					// "+activation[size.length-1][s.output]);
-					// }
+					// System.out.println(max);
+					if (!(max > Double.NEGATIVE_INFINITY)) {
+						System.err.println("Max value equal to -inf error " + max);
+					}
+
 					net.backProp(activation, expectedOutput);
-					
+
 					if (i + 1 < u.getHistory().size()) {
 						s = next;
 					}
@@ -304,12 +309,12 @@ public class NeuralNetworkAI implements AI {
 	}
 
 	public void learn() {
-		if(!enabled)return;
-		
+		if (!enabled)
+			return;
+
+		// net.printWeights();
 		if (qlearning) {
-			//net.printWeights();
 			qlearn();
-			//net.printWeights();
 		} else {
 			alternativeLearn();
 		}
