@@ -13,17 +13,19 @@ public class Model extends Observable {
 	Map levelMap;
 
 	// communistic
-	int winReward = 2000;
-	int loseReward = 0;
-	int globalKillReward=0;
+	int globalWinReward = 2000;
+	int globalLoseReward = -500;
+	int globalKillReward=20;
+	int globalDeathReward=-20;
 	
-	// Capitalistic
+	// capitalistic
 	int damageReward = 2;
 	int killReward = 50;
 	int baseKillReward = 1000;
 	int baseDestroyedReward = -500;
 	int deathReward = -100;
 	double timeReward = -1;
+	
 	boolean capitalist;
 	private ArrayList<Player> playerList;
 	double mapSize;
@@ -40,9 +42,10 @@ public class Model extends Observable {
 		}
 
 		if (capitalist) {
-			winReward = 0;
-			loseReward=0;
+			globalWinReward = 0;
+			globalLoseReward=0;
 			globalKillReward=0;
+			globalDeathReward=0;
 		} else {
 			baseKillReward = 0;
 			baseDestroyedReward=0;
@@ -184,9 +187,16 @@ public class Model extends Observable {
 							u.incKills();
 
 							if (a instanceof Unit) {
-								for(Asset as:playerList.get(u.getOwner()).getAssets()){
-									if(as instanceof Unit){
-										((Unit)as).reward(globalKillReward);
+								if(!capitalist) {
+									for(Asset as:playerList.get(u.getOwner()).getAssets()){
+										if(as instanceof Unit){
+											((Unit)as).reward(globalKillReward);
+										}
+									}
+									for(Asset as:playerList.get(a.getOwner()).getAssets()) {
+										if(as instanceof Unit) {
+											((Unit)as).reward(globalDeathReward);
+										}
 									}
 								}
 								((Unit) a).reward(deathReward);
@@ -201,13 +211,13 @@ public class Model extends Observable {
 								
 								for (Asset as : win.getAssets()) {
 									if (as instanceof Unit) {
-										((Unit) as).reward(winReward);
+										((Unit) as).reward(globalWinReward);
 									}
 								}
 
 								for (Asset as : p.getAssets()) {
 									if (as instanceof Unit) {
-										((Unit) as).reward(loseReward);
+										((Unit) as).reward(globalLoseReward);
 										((Unit) as).reward(baseDestroyedReward);
 									}
 								}

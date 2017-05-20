@@ -9,7 +9,7 @@ public class Main {
 
 	final static boolean fastForward = true;
 	final static boolean qlearning = true;
-	final static boolean capitalist = true;
+	final static boolean capitalist = false;
 
 	public static void main(String[] args) throws InterruptedException {
 		String fileName = JOptionPane.showInputDialog("Input file to load neural network from");
