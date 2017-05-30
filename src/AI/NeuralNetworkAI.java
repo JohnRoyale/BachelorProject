@@ -42,8 +42,9 @@ public class NeuralNetworkAI implements AI {
 	int[] size = { inputs, 15, 8, actions.size() };
 	int range = 2;
 	double gamma = 0.95;
-	double chanceInc = 0.1;
-	double chanceMax = 95.0;
+	double chanceInc = 0.08;
+	double chanceMax = 98.0;
+	double chanceStart = 90.0;
 	double[] input;
 	double[][] activation;
 	double chance;
@@ -74,9 +75,9 @@ public class NeuralNetworkAI implements AI {
 		if (net == null) {
 			System.out.println("test1");
 			net = new NeuralNetwork(size, file);
-			chance = 90.0;
+			chance = chanceStart;
 			try {
-				this.writeToFile(0);
+				this.writeToFile(0,0);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -84,9 +85,9 @@ public class NeuralNetworkAI implements AI {
 		} else if (!net.sameSize(size)) {
 			System.out.println("test2");
 			net = new NeuralNetwork(size, file);
-			chance = 90.0;
+			chance = chanceStart;
 			try {
-				this.writeToFile(0);
+				this.writeToFile(0,0);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -322,9 +323,9 @@ public class NeuralNetworkAI implements AI {
 		// net.printWeights();
 	}
 
-	public void writeToFile(int e) throws IOException {
-		net.setVariables(chance, e);
-		File f = new File(dir, net.id + e);
+	public void writeToFile(int e, int t) throws IOException {
+		net.setVariables(chance, e, t);
+		File f = new File(dir, t + net.id + e);
 		System.out.println("Saved neuralnet to file: " + f.getPath());
 		System.out.println(net.getChance());
 		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f));
@@ -337,7 +338,7 @@ public class NeuralNetworkAI implements AI {
 		File f = new File(dir, fileName);
 		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f.getAbsoluteFile()));
 		Object obj = ois.readObject();
-		System.out.println("Loaded neuralnet from file: " + f.getPath());
+		//System.out.println("Loaded neuralnet from file: " + f.getPath());
 		net = (NeuralNetwork) obj;
 		if (b) {
 			this.chance = net.getChance();
@@ -351,10 +352,28 @@ public class NeuralNetworkAI implements AI {
 		return net.getEpoch();
 	}
 
+	public int getTrial() {
+		return net.getTrial();
+	}
 	@Override
 	public void reset() {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void nextTrial() {
+		int t=net.getTrial()+1;
+		net=new NeuralNetwork(size,net.id);
+		net.setVariables(90, 0, t);
+		chance = chanceStart;
+		
+		try {
+			writeToFile(0,t);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }

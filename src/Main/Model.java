@@ -8,16 +8,16 @@ import Assets.*;
 
 public class Model extends Observable {
 
-	final int populationCap = 100;
+	final int populationCap = 30;
 
 	Map levelMap;
 
 	// communistic
 	int globalWinReward = 2000;
 	int globalLoseReward = -500;
-	int globalKillReward=20;
-	int globalDeathReward=-20;
-	
+	int globalKillReward = 20;
+	int globalDeathReward = -20;
+
 	// capitalistic
 	int damageReward = 2;
 	int killReward = 50;
@@ -25,7 +25,7 @@ public class Model extends Observable {
 	int baseDestroyedReward = -500;
 	int deathReward = -100;
 	double timeReward = -1;
-	
+
 	boolean capitalist;
 	private ArrayList<Player> playerList;
 	double mapSize;
@@ -43,16 +43,16 @@ public class Model extends Observable {
 
 		if (capitalist) {
 			globalWinReward = 0;
-			globalLoseReward=0;
-			globalKillReward=0;
-			globalDeathReward=0;
+			globalLoseReward = 0;
+			globalKillReward = 0;
+			globalDeathReward = 0;
 		} else {
 			baseKillReward = 0;
-			baseDestroyedReward=0;
+			baseDestroyedReward = 0;
 			damageReward = 0;
 			killReward = 0;
 			deathReward = 0;
-			//timeReward = 0;
+			// timeReward = 0;
 		}
 
 		playerList = new ArrayList<Player>();
@@ -187,15 +187,15 @@ public class Model extends Observable {
 							u.incKills();
 
 							if (a instanceof Unit) {
-								if(!capitalist) {
-									for(Asset as:playerList.get(u.getOwner()).getAssets()){
-										if(as instanceof Unit){
-											((Unit)as).reward(globalKillReward);
+								if (!capitalist) {
+									for (Asset as : playerList.get(u.getOwner()).getAssets()) {
+										if (as instanceof Unit) {
+											((Unit) as).reward(globalKillReward);
 										}
 									}
-									for(Asset as:playerList.get(a.getOwner()).getAssets()) {
-										if(as instanceof Unit) {
-											((Unit)as).reward(globalDeathReward);
+									for (Asset as : playerList.get(a.getOwner()).getAssets()) {
+										if (as instanceof Unit) {
+											((Unit) as).reward(globalDeathReward);
 										}
 									}
 								}
@@ -206,19 +206,23 @@ public class Model extends Observable {
 								gameOver = true;
 
 								u.reward(baseKillReward);
-								
-								Player win= playerList.get(winner);
-								
-								for (Asset as : win.getAssets()) {
-									if (as instanceof Unit) {
-										((Unit) as).reward(globalWinReward);
+
+								Player win = playerList.get(winner);
+
+								if (!capitalist) {
+									for (Asset as : win.getAssets()) {
+										if (as instanceof Unit) {
+											((Unit) as).reward(globalWinReward);
+										}
 									}
 								}
-
 								for (Asset as : p.getAssets()) {
 									if (as instanceof Unit) {
-										((Unit) as).reward(globalLoseReward);
-										((Unit) as).reward(baseDestroyedReward);
+										if (!capitalist) {
+											((Unit) as).reward(globalLoseReward);
+										} else {
+											((Unit) as).reward(baseDestroyedReward);
+										}
 									}
 								}
 

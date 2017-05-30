@@ -1,40 +1,64 @@
-Loaded neuralnet from file: NeuralNetworks\qRand0
-After 0 epochs of training Neural AI won 34 games, drawed 0 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand10
-After 10 epochs of training Neural AI won 27 games, drawed 0 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand20
-After 20 epochs of training Neural AI won 92 games, drawed 5 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand30
-After 30 epochs of training Neural AI won 81 games, drawed 17 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand40
-After 40 epochs of training Neural AI won 94 games, drawed 6 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand50
-After 50 epochs of training Neural AI won 91 games, drawed 8 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand60
-After 60 epochs of training Neural AI won 91 games, drawed 9 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand70
-After 70 epochs of training Neural AI won 84 games, drawed 12 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand80
-After 80 epochs of training Neural AI won 92 games, drawed 7 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand90
-After 90 epochs of training Neural AI won 89 games, drawed 10 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand100
-After 100 epochs of training Neural AI won 89 games, drawed 9 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand110
-After 110 epochs of training Neural AI won 88 games, drawed 11 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand120
-After 120 epochs of training Neural AI won 83 games, drawed 13 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand130
-After 130 epochs of training Neural AI won 90 games, drawed 7 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand140
-After 140 epochs of training Neural AI won 83 games, drawed 16 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand150
-After 150 epochs of training Neural AI won 90 games, drawed 9 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand160
-After 160 epochs of training Neural AI won 91 games, drawed 7 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand170
-After 170 epochs of training Neural AI won 93 games, drawed 4 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand180
-After 180 epochs of training Neural AI won 91 games, drawed 9 games out of 100 games
-Loaded neuralnet from file: NeuralNetworks\qRand190
-After 190 epochs of training Neural AI won 91 games, drawed 7 games out of 100 games
+trial,epoch,wins
+0,0,13
+0,2,14
+0,4,38
+0,6,49
+0,8,12
+0,10,15
+0,12,13
+0,14,13
+0,16,45
+0,18,11
+0,20,44
+0,22,48
+0,24,47
+0,26,48
+0,28,45
+0,30,48
+0,32,46
+0,34,43
+0,36,42
+0,38,46
+0,40,43
+0,42,42
+0,44,43
+0,46,45
+0,48,43
+1,0,15
+1,2,39
+1,4,44
+1,6,45
+1,8,45
+1,10,19
+1,12,43
+1,14,10
+1,16,42
+1,18,10
+1,20,8
+1,22,47
+1,24,42
+1,26,12
+1,28,22
+1,30,15
+1,32,12
+1,34,15
+1,36,10
+1,38,10
+1,40,47
+1,42,46
+1,44,46
+1,46,47
+1,48,43
+1,50,45
+1,52,46
+1,54,45
+1,56,45
+1,58,42
+1,60,47
+1,62,44
+1,64,44
+1,66,42
+1,68,42
+1,70,44
+1,72,47
+1,74,45

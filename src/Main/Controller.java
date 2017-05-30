@@ -27,8 +27,8 @@ public class Controller extends Observable {
 		model = new Model("map2", c);
 		model.levelMap.printMap();
 		orderQueue = new ConcurrentLinkedQueue<Order>();
-		player1 = new ClassicBehaviourAI(orderQueue, model, 1);
-		//player1 = new RandomBehaviourAI(orderQueue, model, 1);
+		//player1 = new ClassicBehaviourAI(orderQueue, model, 1);
+		player1 = new RandomBehaviourAI(orderQueue, model, 1);
 		player2 = new NeuralNetworkAI(orderQueue, model, 2, q,e, file);
 		
 
@@ -99,17 +99,17 @@ public class Controller extends Observable {
 		return model.getWinner();
 	}
 
-	public void backProp(boolean b, int epoch) throws IOException {
+	public void backProp(boolean b, int epoch, int trial) throws IOException {
 		if (player1 instanceof NeuralNetworkAI) {
 			if (b)
-				((NeuralNetworkAI) player1).writeToFile(epoch);
+				((NeuralNetworkAI) player1).writeToFile(epoch,trial);
 			((NeuralNetworkAI) player1).learn();
 			((NeuralNetworkAI) player1).incChance();
 		}
 
 		if (player2 instanceof NeuralNetworkAI) {
 			if (b)
-				((NeuralNetworkAI) player2).writeToFile(epoch);
+				((NeuralNetworkAI) player2).writeToFile(epoch,trial);
 			((NeuralNetworkAI) player2).learn();
 			((NeuralNetworkAI) player2).incChance();
 		}
@@ -126,6 +126,17 @@ public class Controller extends Observable {
 		}
 		return -1;
 	}
+	
+	public int getTrial() {
+		if (player1 instanceof NeuralNetworkAI) {
+			return ((NeuralNetworkAI) player1).getTrial();
+		}
+
+		if (player2 instanceof NeuralNetworkAI) {
+			return ((NeuralNetworkAI) player2).getTrial();
+		}
+		return -1;
+	}
 
 	public void reset() {
 		model.reset();
@@ -135,6 +146,16 @@ public class Controller extends Observable {
 		
 		player1.run();
 		player2.run();
+	}
+	
+	public void nextTrial(){
+		if (player1 instanceof NeuralNetworkAI) {
+			((NeuralNetworkAI) player1).nextTrial();
+		}
+
+		if (player2 instanceof NeuralNetworkAI) {
+			((NeuralNetworkAI) player2).nextTrial();
+		}
 	}
 
 	public boolean queueFull() {

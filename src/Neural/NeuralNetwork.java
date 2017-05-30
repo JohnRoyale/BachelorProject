@@ -14,13 +14,13 @@ public class NeuralNetwork implements Serializable {
 	 double[][][] dWeights;
 	 int[] size;
 	 double[][] activation;
-	 double startingLearningRate = 0.1;
-	 double minLearningRate=0.0005;
-	 double degration = .9;
-	 double momentum =0;
+	 double startingLearningRate = 0.05;
+	 double minLearningRate=0.0001;
+	 double degration = .85;
+	 double momentum =0.4;
 	 double bias = -1;
 	 double chance;
-	 int epoch;
+	 int epoch, trial;
 	
 	
 	public NeuralNetwork(int[] size, String name){
@@ -29,9 +29,10 @@ public class NeuralNetwork implements Serializable {
 		activation=new double[size.length][];
 		init();
 	}
-	public void setVariables(double d, int e){
+	public void setVariables(double d, int e, int t){
 		chance=d;
 		epoch=e;
+		trial=t;
 	}
 	public double getChance(){
 		return chance;
@@ -39,6 +40,10 @@ public class NeuralNetwork implements Serializable {
 	
 	public int getEpoch(){
 		return epoch;
+	}
+	
+	public int getTrial(){
+		return trial;
 	}
 	
 	
@@ -54,7 +59,7 @@ public class NeuralNetwork implements Serializable {
 		for (int i = 0; i < weights.length; i++) {
 			for (int j = 0; j < weights[i].length; j++) {
 				for (int k = 0; k < weights[i][j].length; k++) {
-					weights[i][j][k] = r.nextDouble() * 2 - 1;
+					weights[i][j][k] = r.nextDouble() * 100 - 50;
 				}
 			}
 		}
