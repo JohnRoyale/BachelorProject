@@ -17,6 +17,8 @@ public class Model extends Observable {
 	int globalLoseReward = -500;
 	int globalKillReward = 20;
 	int globalDeathReward = -20;
+	int globalDistanceReward = 5;
+	
 
 	// capitalistic
 	int damageReward = 2;
@@ -191,6 +193,12 @@ public class Model extends Observable {
 									for (Asset as : playerList.get(u.getOwner()).getAssets()) {
 										if (as instanceof Unit) {
 											((Unit) as).reward(globalKillReward);
+											int i = as.getOwner();
+											int j = (as.getOwner()%2)+1;
+											if(Math.abs(playerList.get(i).baseX - as.getX()) > Math.abs(playerList.get(j).baseX - as.getX()) &&
+											   Math.abs(playerList.get(i).baseY - as.getY()) > Math.abs(playerList.get(j).baseY - as.getY())) {
+												((Unit) as).reward(globalDistanceReward);
+											}
 										}
 									}
 									for (Asset as : playerList.get(a.getOwner()).getAssets()) {

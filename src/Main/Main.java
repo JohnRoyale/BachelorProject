@@ -9,7 +9,7 @@ public class Main {
 
 	final static boolean fastForward = true;
 	final static boolean qlearning = true;
-	final static boolean capitalist = true;
+	final static boolean capitalist = false;
 
 	public static void main(String[] args) throws InterruptedException {
 		String fileName = JOptionPane.showInputDialog("Input file to load neural network from");
@@ -32,10 +32,10 @@ public class Main {
 				while (!controller.gameOver() && k < 90 * 50) {
 					if ((System.currentTimeMillis() - ctime > 20)
 							|| (controller.queueFull() && (!draw || fastForward))) {
-						// draw = System.currentTimeMillis() - ctime > 20 &&
-						// draw;
+						//draw = System.currentTimeMillis() - ctime > 20 &&
+						//draw;
 						ctime = System.currentTimeMillis();
-						controller.update(false);
+						controller.update(true);
 						k++;
 					}
 				}
