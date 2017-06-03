@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 public class Main {
 
 	final static boolean fastForward = true;
-	final static boolean qlearning = true;
+	final static boolean qlearning = false;
 	final static boolean capitalist = true;
 
 	public static void main(String[] args) throws InterruptedException {

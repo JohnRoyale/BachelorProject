@@ -31,7 +31,7 @@ public class MainTest {
 
 			while (controller.load(name)) {
 				int equal = 0;
-				int j = 0;
+				double j = 0;
 				for (int i = 0; i < epochs; i++) {
 					int k = 0;
 					while (!controller.gameOver() && k < 90 * 50) {
@@ -53,7 +53,7 @@ public class MainTest {
 					//System.out.print(i);
 				}
 				System.setOut(out);
-				System.out.println(prefix+","+postfix+","+j);
+				System.out.println(prefix+","+postfix+","+j/epochs);
 				System.setOut(stdout);
 //				System.out.println("After " + postfix + " epochs of training Neural AI won " + j + " games, drawed "
 //						+ equal + " games out of " + epochs + " games");
