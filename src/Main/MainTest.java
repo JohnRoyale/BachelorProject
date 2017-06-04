@@ -24,13 +24,13 @@ public class MainTest {
 		PrintStream out = new PrintStream(new FileOutputStream(fileName + "_performance.csv"));
 		//System.setOut(out);
 		System.setOut(out);
-		System.out.println("trial,epoch,wins");
+		System.out.println("trial,epoch,winRate,tieRate");
 		System.setOut(stdout);
 
 		for (int t = 0; t < 1000; t++) {
 
 			while (controller.load(name)) {
-				int equal = 0;
+				double equal = 0;
 				double j = 0;
 				for (int i = 0; i < epochs; i++) {
 					int k = 0;
@@ -53,7 +53,7 @@ public class MainTest {
 					//System.out.print(i);
 				}
 				System.setOut(out);
-				System.out.println(prefix+","+postfix+","+j/epochs);
+				System.out.println(prefix+","+postfix+","+j/epochs+","+equal/epochs);
 				System.setOut(stdout);
 //				System.out.println("After " + postfix + " epochs of training Neural AI won " + j + " games, drawed "
 //						+ equal + " games out of " + epochs + " games");
