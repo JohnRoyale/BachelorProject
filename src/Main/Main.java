@@ -14,6 +14,7 @@ public class Main {
 	public static void main(String[] args) throws InterruptedException {
 		String fileName = JOptionPane.showInputDialog("Input file to load neural network from");
 		Controller controller = new Controller(qlearning, capitalist, true, fileName);
+		System.out.println();
 		long startTime = System.currentTimeMillis();
 		long ctime = System.currentTimeMillis();
 		long gameTime;
@@ -35,17 +36,12 @@ public class Main {
 						//draw = System.currentTimeMillis() - ctime > 20 &&
 						//draw;
 						ctime = System.currentTimeMillis();
-						controller.update(true);
+						controller.update(false);
 						k++;
 					}
 				}
 				ctime = System.currentTimeMillis();
-				try {
-					controller.backProp(draw, i,t);
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				
 				if (i % 1 == 0)
 					System.out.println("Epoch: " + i + ", Round time: " + (System.currentTimeMillis() - gameTime)
 							+ "ms, Frames: " + k + ", backProp time: " + (System.currentTimeMillis() - ctime)
@@ -57,7 +53,15 @@ public class Main {
 				}
 				if (i % 1 == 0)
 					System.out.println("Neural AI won " + wins + " games drawed " + equal + " games out of the last "
-							+ j + " games played\n");
+							+ j + " games played");
+				
+				try {
+					controller.backProp(draw, i,t);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				System.out.println();
 
 				controller.reset();
 				startTime = System.currentTimeMillis();

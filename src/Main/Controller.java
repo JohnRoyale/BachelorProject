@@ -27,9 +27,9 @@ public class Controller extends Observable {
 		model = new Model("map2", c);
 		model.levelMap.printMap();
 		orderQueue = new ConcurrentLinkedQueue<Order>();
-		player1 = new ClassicBehaviourAI(orderQueue, model, 1);
+		//player1 = new ClassicBehaviourAI(orderQueue, model, 1);
 		//player1 = new ProbabilityBehaviourAI(orderQueue, model, 1);
-		//player1 = new RandomBehaviourAI(orderQueue, model, 1);
+		player1 = new RandomBehaviourAI(orderQueue, model, 1);
 		player2 = new NeuralNetworkAI(orderQueue, model, 2, q,e, file);
 		
 
@@ -125,7 +125,7 @@ public class Controller extends Observable {
 		if (player2 instanceof NeuralNetworkAI) {
 			return ((NeuralNetworkAI) player2).getEpoch();
 		}
-		return -1;
+		return 0;
 	}
 	
 	public int getTrial() {

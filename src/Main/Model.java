@@ -12,9 +12,15 @@ public class Model extends Observable {
 
 	Map levelMap;
 
+	// communistic
+	int globalWinReward = 2000;
+	int globalLoseReward = -500;
+	int globalKillReward = 20;
+	int globalDeathReward = -20;
+	int globalDistanceReward = 5;
 	
 
-	// reward function
+	// capitalistic
 	int damageReward = 2;
 	int killReward = 50;
 	int baseKillReward = 1000;
@@ -37,6 +43,19 @@ public class Model extends Observable {
 			e.printStackTrace();
 		}
 
+		if (capitalist) {
+			globalWinReward = 0;
+			globalLoseReward = 0;
+			globalKillReward = 0;
+			globalDeathReward = 0;
+		} else {
+			baseKillReward = 0;
+			baseDestroyedReward = 0;
+			damageReward = 0;
+			killReward = 0;
+			deathReward = 0;
+			// timeReward = 0;
+		}
 
 		playerList = new ArrayList<Player>();
 		playerList.add(new Player(0)); // nature
@@ -161,15 +180,7 @@ public class Model extends Observable {
 						if (u.getCoolDown() == 0) {
 							a.damage(damage);
 							u.setCoolDown(u.getAttackSpeed());
-							if(!capitalist) {
-								for (Asset as : playerList.get(u.getOwner()).getAssets()) {
-									if (as instanceof Unit) {
-										((Unit) as).reward(damage*damageReward);
-									}
-								}
-							} else {
-								u.reward(damage * damageReward);
-							}
+							u.reward(damage * damageReward);
 						} else {
 							u.setCoolDown(u.getCoolDown() - 1);
 						}
@@ -181,39 +192,48 @@ public class Model extends Observable {
 								if (!capitalist) {
 									for (Asset as : playerList.get(u.getOwner()).getAssets()) {
 										if (as instanceof Unit) {
-											((Unit) as).reward(killReward);
+											((Unit) as).reward(globalKillReward);
+											int i = as.getOwner();
+											int j = (as.getOwner()%2)+1;
+											if(Math.abs(playerList.get(i).baseX - as.getX()) > Math.abs(playerList.get(j).baseX - as.getX()) &&
+											   Math.abs(playerList.get(i).baseY - as.getY()) > Math.abs(playerList.get(j).baseY - as.getY())) {
+												((Unit) as).reward(globalDistanceReward);
+											}
 										}
 									}
 									for (Asset as : playerList.get(a.getOwner()).getAssets()) {
 										if (as instanceof Unit) {
-											((Unit) as).reward(deathReward);
+											((Unit) as).reward(globalDeathReward);
 										}
 									}
-								} else {
-									((Unit) a).reward(deathReward);
-									u.reward(killReward);
 								}
+								((Unit) a).reward(deathReward);
+								u.reward(killReward);
 							} else {
 								winner = u.getOwner();
 								gameOver = true;
+
+								u.reward(baseKillReward);
 
 								Player win = playerList.get(winner);
 
 								if (!capitalist) {
 									for (Asset as : win.getAssets()) {
 										if (as instanceof Unit) {
-											((Unit) as).reward(baseKillReward);
+											((Unit) as).reward(globalWinReward);
 										}
 									}
-								} else {
-									u.reward(baseKillReward);
 								}
-								
 								for (Asset as : p.getAssets()) {
 									if (as instanceof Unit) {
-										((Unit) as).reward(baseDestroyedReward);
+										if (!capitalist) {
+											((Unit) as).reward(globalLoseReward);
+										} else {
+											((Unit) as).reward(baseDestroyedReward);
+										}
 									}
 								}
+
 							}
 							if (u.getState().equals("hunt"))
 								u.setState("idle");

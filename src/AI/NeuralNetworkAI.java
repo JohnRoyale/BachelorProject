@@ -73,7 +73,6 @@ public class NeuralNetworkAI implements AI {
 			}
 		}
 		if (net == null) {
-			System.out.println("test1");
 			net = new NeuralNetwork(size, file);
 			chance = chanceStart;
 			try {
@@ -83,7 +82,6 @@ public class NeuralNetworkAI implements AI {
 				e.printStackTrace();
 			}
 		} else if (!net.sameSize(size)) {
-			System.out.println("test2");
 			net = new NeuralNetwork(size, file);
 			chance = chanceStart;
 			try {
@@ -95,7 +93,7 @@ public class NeuralNetworkAI implements AI {
 		} else {
 			chance = net.getChance();
 		}
-		System.out.println(chance);
+		//System.out.println(chance);
 
 		input = new double[inputs];
 	}
@@ -327,7 +325,7 @@ public class NeuralNetworkAI implements AI {
 		net.setVariables(chance, e, t);
 		File f = new File(dir, t + net.id + e);
 		System.out.println("Saved neuralnet to file: " + f.getPath());
-		System.out.println(net.getChance());
+		//System.out.println(net.getChance());
 		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f));
 		oos.writeObject(net);
 		oos.flush();
