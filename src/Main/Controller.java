@@ -3,6 +3,9 @@ package Main;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Observable;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -28,12 +31,12 @@ public class Controller extends Observable {
 		model.levelMap.printMap();
 		orderQueue = new ConcurrentLinkedQueue<Order>();
 		//player1 = new ClassicBehaviourAI(orderQueue, model, 1);
-		//player1 = new ProbabilityBehaviourAI(orderQueue, model, 1);
+		//player1 = new HuntAI(orderQueue, model, 1);
+		// player1 = new ProbabilityBehaviourAI(orderQueue, model, 1);
 		player1 = new RandomBehaviourAI(orderQueue, model, 1);
-		player2 = new NeuralNetworkAI(orderQueue, model, 2, q,e, file);
-		
+		player2 = new NeuralNetworkAI(orderQueue, model, 2, q, e, file);
+		// player2 = new HuntAI(orderQueue, model, 2);
 
-		
 		p1 = new Thread(player1);
 		p2 = new Thread(player2);
 
@@ -67,6 +70,12 @@ public class Controller extends Observable {
 	public void update(boolean draw) {
 		int size = orderQueue.size();
 		// System.out.println(size);
+		player2.interrupt();
+		player1.interrupt();
+		ArrayList<Order> arr = new ArrayList<Order>(orderQueue);
+		orderQueue.clear();
+		Collections.shuffle(arr);
+		orderQueue.addAll(arr);
 		for (int i = 0; i < size; i++) {
 			Order o = orderQueue.poll();
 			if (o.a instanceof Building) {
@@ -78,14 +87,11 @@ public class Controller extends Observable {
 			if (draw) {
 				this.setChanged();
 			}
+
 		}
-		if (r.nextBoolean()) {
-			player2.run();
-			player1.run();
-		} else {
-			player1.run();
-			player2.run();
-		}
+
+		player1.run();
+		player2.run();
 		if (draw) {
 			this.notifyObservers();
 		}
@@ -103,14 +109,14 @@ public class Controller extends Observable {
 	public void backProp(boolean b, int epoch, int trial) throws IOException {
 		if (player1 instanceof NeuralNetworkAI) {
 			if (b)
-				((NeuralNetworkAI) player1).writeToFile(epoch,trial);
+				((NeuralNetworkAI) player1).writeToFile(epoch, trial);
 			((NeuralNetworkAI) player1).learn();
 			((NeuralNetworkAI) player1).incChance();
 		}
 
 		if (player2 instanceof NeuralNetworkAI) {
 			if (b)
-				((NeuralNetworkAI) player2).writeToFile(epoch,trial);
+				((NeuralNetworkAI) player2).writeToFile(epoch, trial);
 			((NeuralNetworkAI) player2).learn();
 			((NeuralNetworkAI) player2).incChance();
 		}
@@ -127,7 +133,7 @@ public class Controller extends Observable {
 		}
 		return 0;
 	}
-	
+
 	public int getTrial() {
 		if (player1 instanceof NeuralNetworkAI) {
 			return ((NeuralNetworkAI) player1).getTrial();
@@ -144,12 +150,16 @@ public class Controller extends Observable {
 		orderQueue.clear();
 		player1.reset();
 		player2.reset();
-		
+
 		player1.run();
 		player2.run();
 	}
-	
-	public void nextTrial(){
+
+	public int[] count() {
+		return ((NeuralNetworkAI) player2).getCount();
+	}
+
+	public void nextTrial() {
 		if (player1 instanceof NeuralNetworkAI) {
 			((NeuralNetworkAI) player1).nextTrial();
 		}
@@ -172,17 +182,18 @@ public class Controller extends Observable {
 
 			try {
 				if (player1 instanceof NeuralNetworkAI) {
-					((NeuralNetworkAI) player1).readFromFile(name,false);
-					
+					((NeuralNetworkAI) player1).readFromFile(name, false);
+
 				}
 				if (player2 instanceof NeuralNetworkAI) {
-					((NeuralNetworkAI) player2).readFromFile(name,false);
-					
+					((NeuralNetworkAI) player2).readFromFile(name, false);
+
 				}
 			} catch (ClassNotFoundException | IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			};
+			}
+			;
 
 			return true;
 		}

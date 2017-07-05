@@ -10,7 +10,7 @@ import Main.Model;
 import Main.Order;
 
 public class RandomAI implements AI {
-
+	boolean inter=false;
 	Model model;
 	int playerID;
 	ConcurrentLinkedQueue<Order> orderQueue;
@@ -69,7 +69,13 @@ public class RandomAI implements AI {
 	@Override
 	public void run() {
 
+		inter=false;
 		for (Asset a : model.getPlayerList().get(playerID).getAssets()) {
+
+			if (inter) {
+				inter=false;
+				break;
+			}
 			this.determineAction(a);
 		}
 
@@ -77,6 +83,14 @@ public class RandomAI implements AI {
 
 	@Override
 	public void reset() {
+		inter=false;
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void interrupt() {
+		inter=true;
 		// TODO Auto-generated method stub
 		
 	}

@@ -7,8 +7,10 @@ import java.io.PrintStream;
 import javax.swing.JOptionPane;
 
 public class MainTest {
-	final static int epochs = 50;
+	final static int epochs = 40;
 	final static int inc = 2;
+	static double total=0;
+	static int[] count=new int[4];
 
 	public static void main(String[] args) throws FileNotFoundException {
 		// TODO Auto-generated method stub
@@ -24,14 +26,15 @@ public class MainTest {
 		PrintStream out = new PrintStream(new FileOutputStream(fileName + "_performance.csv"));
 		//System.setOut(out);
 		System.setOut(out);
-		System.out.println("trial,epoch,winRate,tieRate");
+		System.out.println("trial,epoch,winRate,tieRate,lossRate,Defend,Defensive invade, Evasive invade, Hunt");
 		System.setOut(stdout);
 
-		for (int t = 0; t < 1000; t++) {
+		for (int t = prefix; t < 1000; t++) {
 
 			while (controller.load(name)) {
 				double equal = 0;
 				double j = 0;
+				int[] tCount;
 				for (int i = 0; i < epochs; i++) {
 					int k = 0;
 					while (!controller.gameOver() && k < 90 * 50) {
@@ -49,17 +52,27 @@ public class MainTest {
 					}
 					// if ((i+1) % 10 == 0)
 					System.out.println(j + "/" + (i + 1)+" ");
+					tCount=controller.count();
+					count[0]+=tCount[0];
+					count[1]+=tCount[1];
+					count[2]+=tCount[2];
+					count[3]+=tCount[3];
 					controller.reset();
 					//System.out.print(i);
 				}
+				total=count[0]+count[1]+count[2]+count[3];
 				System.setOut(out);
-				System.out.println(prefix+","+postfix+","+j/epochs+","+equal/epochs);
+				System.out.println(prefix+","+postfix+","+j/epochs+","+equal/epochs+","+(epochs-j-equal)/epochs+","+count[0]/total+","+count[1]/total+","+count[2]/total+","+count[3]/total);
 				System.setOut(stdout);
+				count=new int[4];
+				total=0;
 //				System.out.println("After " + postfix + " epochs of training Neural AI won " + j + " games, drawed "
 //						+ equal + " games out of " + epochs + " games");
 				// System.setOut(stdout);
 				postfix += inc;
-
+				if(postfix>26){
+					postfix=1000;
+				}
 				name = subname + postfix;
 			}
 			prefix=t+1;

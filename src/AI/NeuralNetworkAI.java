@@ -28,6 +28,7 @@ import PathFinder.ResistancePathFinder;
 import PathFinder.ShortestPathFinder;
 
 public class NeuralNetworkAI implements AI {
+	boolean inter=false;
 	Model model;
 	int playerID, enemyID;
 	Player enemy, self;
@@ -39,23 +40,29 @@ public class NeuralNetworkAI implements AI {
 	List<Character> production = Arrays.asList('n', 's', 'a', 'c');
 	NeuralNetwork net;
 	int inputs = 14;
-	int[] size = { inputs, 15, 8, actions.size() };
+	int[] size = { inputs, 100,50, actions.size() };
 	int range = 2;
 	double gamma = 0.95;
-	double chanceInc = 0.08;
+	double chanceInc = .36;
 	double chanceMax = 98.0;
-	double chanceStart = 90.0;
+	double chanceStart = 80.0;
 	double[] input;
 	double[][] activation;
 	double chance;
 	boolean qlearning;
 	boolean enabled;
 	File dir;
+	
+	int count[]=new int[4];
 
 	public NeuralNetworkAI(ConcurrentLinkedQueue<Order> orderQueue, Model m, int player, boolean q, boolean en,
 			String file) {
 		qlearning = q;
 		enabled = en;
+		if(!enabled){
+			chanceStart=100;
+			chanceMax=100;
+		}
 		playerID = player;
 		this.orderQueue = orderQueue;
 		model = m;
@@ -189,6 +196,7 @@ public class NeuralNetworkAI implements AI {
 				}
 				String s = actions.get(best);
 				// System.out.println(s);
+				count[best]++;
 				u.addState(input, best);
 				u.setState(s);
 			}
@@ -208,6 +216,7 @@ public class NeuralNetworkAI implements AI {
 
 	@Override
 	public void run() {
+		inter=false;
 		self = model.getPlayerList().get(playerID);
 		if (playerID == 1) {
 			enemyID = 2;
@@ -218,6 +227,10 @@ public class NeuralNetworkAI implements AI {
 		}
 
 		for (Iterator<Asset> iter = self.getAssets().iterator(); iter.hasNext();) {
+			if (inter) {
+				inter=false;
+				break;
+			}
 			Asset a = iter.next();
 			this.determineAction(a);
 		}
@@ -229,6 +242,9 @@ public class NeuralNetworkAI implements AI {
 		assets.addAll(self.getAssets());
 		assets.addAll(self.getLostAssets());
 
+		double avgSE=0;
+		double count=0;
+		double error;
 		for (Asset a : assets) {
 			if (a instanceof Unit) {
 				Unit u = (Unit) a;
@@ -242,7 +258,6 @@ public class NeuralNetworkAI implements AI {
 				double[] nextExpected;
 
 				double max;
-
 				for (int i = 0; i < u.getHistory().size(); i++) {
 					if (i + 1 < u.getHistory().size()) {
 						next = u.getHistory().get(i);
@@ -270,7 +285,9 @@ public class NeuralNetworkAI implements AI {
 						System.err.println("Max value equal to -inf error " + max);
 					}
 
-					net.backProp(activation, expectedOutput);
+					error=net.backProp(activation, expectedOutput);
+					avgSE+=error*error;
+					count++;
 
 					if (i + 1 < u.getHistory().size()) {
 						s = next;
@@ -278,6 +295,7 @@ public class NeuralNetworkAI implements AI {
 				}
 			}
 		}
+		System.out.println("Average squared error: "+ (avgSE/count));
 	}
 
 	public void alternativeLearn() {
@@ -338,7 +356,7 @@ public class NeuralNetworkAI implements AI {
 		Object obj = ois.readObject();
 		//System.out.println("Loaded neuralnet from file: " + f.getPath());
 		net = (NeuralNetwork) obj;
-		if (b) {
+		if (enabled) {
 			this.chance = net.getChance();
 		} else {
 			this.chance = 100;
@@ -353,10 +371,16 @@ public class NeuralNetworkAI implements AI {
 	public int getTrial() {
 		return net.getTrial();
 	}
+	
+	public int[] getCount(){
+		return count;
+	}
+	
 	@Override
 	public void reset() {
 		// TODO Auto-generated method stub
-
+		count= new int[4];
+		inter=false;
 	}
 
 	public void nextTrial() {
@@ -371,6 +395,13 @@ public class NeuralNetworkAI implements AI {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+	}
+
+	@Override
+	public void interrupt() {
+		inter=true;
+		// TODO Auto-generated method stub
 		
 	}
 

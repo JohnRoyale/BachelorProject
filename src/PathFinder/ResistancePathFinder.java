@@ -1,6 +1,7 @@
 package PathFinder;
 
 import java.util.PriorityQueue;
+import java.util.Random;
 
 import Main.Map;
 import Main.Model;
@@ -14,6 +15,7 @@ public class ResistancePathFinder {
 		int heuristic;
 		int total;
 		char direction;
+		Random rand=new Random();
 
 		public Position(int x, int y, char direction, int travelled, int resistance, int heuristic) {
 			this.x = x;
@@ -40,9 +42,9 @@ public class ResistancePathFinder {
 		public int compareTo(Position s) {
 
 			
-			if (this.total > s.total + 3){
+			if (this.total > s.total+m.size*1.2){
 					return 1;
-			} else 	if (s.total > this.total + 3){
+			} else 	if (s.total > this.total+m.size*1.2){
 					return -1;
 			}
 
@@ -55,7 +57,7 @@ public class ResistancePathFinder {
 
 			if (value == 0) {
 				if(this.total-total==0){
-					return 1-(this.total%2)*2;
+					return 1-(rand.nextInt(2))*2;
 				}
 				return this.total-s.total;
 			}else if(value>0){

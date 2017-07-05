@@ -1,7 +1,7 @@
 package Assets;
 
 public class Archer extends Unit {
-	public static final int buildtime = 40;
+	public static final int buildtime = 80;
 	
 	public Archer(int owner, double x, double y, int mapSize) {
 		super(owner, x, y, 6, 3, 3, 1.8, 1.2/mapSize,mapSize);

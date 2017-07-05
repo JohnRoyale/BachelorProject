@@ -1,6 +1,7 @@
 package PathFinder;
 
 import java.util.PriorityQueue;
+import java.util.Random;
 
 import Main.Map;
 
@@ -12,6 +13,7 @@ public class ShortestPathFinder {
 		int heuristic;
 		int total;
 		char direction;
+		Random rand=new Random();
 		
 		public Position(int x, int y,char direction, int travelled,int heuristic){
 			this.x=x;
@@ -32,7 +34,7 @@ public class ShortestPathFinder {
 		@Override
 		public int compareTo(Position s) {	       
 			if(this.total-total==0){
-				return 1-(this.total%2)*2;
+				return 1-(rand.nextInt(2))*2;
 			}
 			return this.total-s.total;
 		}

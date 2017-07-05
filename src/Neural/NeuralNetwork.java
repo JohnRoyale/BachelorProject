@@ -14,9 +14,9 @@ public class NeuralNetwork implements Serializable {
 	 double[][][] dWeights;
 	 int[] size;
 	 double[][] activation;
-	 double startingLearningRate = 0.05;
-	 double minLearningRate=0.0001;
-	 double degration = .85;
+	 double startingLearningRate = 0.005;
+	 double minLearningRate=0.000001;
+	 double degration=0.7;
 	 double momentum =0.4;
 	 double bias = -1;
 	 double chance;
@@ -102,7 +102,7 @@ public class NeuralNetwork implements Serializable {
 		return C;
 	}
 	
-	public void backProp(double[][] activation, double[] expectedOutput) {
+	public double backProp(double[][] activation, double[] expectedOutput) {
 		double[][] error = new double[activation.length][];
 
 		for (int i = 0; i < activation.length; i++) {
@@ -116,6 +116,10 @@ public class NeuralNetwork implements Serializable {
 
 		error[error.length - 1] = arraySub(expectedOutput, activation[activation.length - 1]);
 
+//		System.out.print(error[error.length - 1][0]+" " );
+//		System.out.print(error[error.length - 1][1]+" " );
+//		System.out.print(error[error.length - 1][2]+" " );
+//		System.out.print(error[error.length - 1][3]+"\n" );
 		for (int k = weights.length - 1; k > 0; k--) {
 			if (k > 0) {
 				error[k] = new double[error[k].length];
@@ -141,6 +145,7 @@ public class NeuralNetwork implements Serializable {
 				}
 			}
 		}
+		return error[error.length - 1][0]+error[error.length - 1][1]+error[error.length - 1][2]+error[error.length - 1][3];
 
 	}
 	

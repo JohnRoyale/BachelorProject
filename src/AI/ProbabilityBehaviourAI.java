@@ -18,7 +18,7 @@ import PathFinder.ResistancePathFinder;
 import PathFinder.ShortestPathFinder;
 
 public class ProbabilityBehaviourAI implements AI {
-
+		boolean inter=false;
 		Model model;
 		int playerID;
 		int enemy;
@@ -146,10 +146,16 @@ public class ProbabilityBehaviourAI implements AI {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void run() {
+			inter=false;
 
 			// Generate actions maybe add timer to prevent overloading the queue
 
 			for (Asset a : model.getPlayerList().get(playerID).getAssets()) {
+
+				if (inter) {
+					inter=false;
+					break;
+				}
 				this.determineAction(a);
 			}
 
@@ -157,6 +163,14 @@ public class ProbabilityBehaviourAI implements AI {
 
 		@Override
 		public void reset() {
+			inter=false;
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void interrupt() {
+			inter=true;
 			// TODO Auto-generated method stub
 			
 		}

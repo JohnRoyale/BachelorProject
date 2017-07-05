@@ -12,10 +12,11 @@ import Main.Player;
 import PathFinder.*;
 
 public class RandomBehaviourAI implements AI {
-
+	boolean inter =false;
 	Model model;
 	int playerID;
-	int enemy;
+	int enemyID;
+	Player enemy, self;
 	ConcurrentLinkedQueue<Order> orderQueue;
 	Random random = new Random(System.currentTimeMillis());
 	ResistancePathFinder p;
@@ -25,11 +26,7 @@ public class RandomBehaviourAI implements AI {
 
 	public RandomBehaviourAI(ConcurrentLinkedQueue<Order> orderQueue, Model m, int player) {
 		this.playerID = player;
-		if (playerID == 1) {
-			enemy = 2;
-		} else {
-			enemy = 1;
-		}
+		
 		this.orderQueue = orderQueue;
 		p = new ResistancePathFinder(m);
 		sp = new ShortestPathFinder(m.getLevelMap());
@@ -45,30 +42,20 @@ public class RandomBehaviourAI implements AI {
 				action = 'b'; // busy producing unit
 				b.tic();
 			} else {
-				action = b.getInProduction(); // signals unit ready for
-												// production
-				int next = random.nextInt(production.size()); // get new random
-																// for choosing
-																// a unit
-				b.setInProduction(production.get(next)); // set new unit in
-															// production
+				action = b.getInProduction();
 
-				switch (action) {
-				case 's': {
-					b.setProductionTimer(Spearman.buildtime);
-					break;
-				}
-				case 'a': {
+				if (self.archerCount < enemy.spearmanCount) {
+					b.setInProduction('a');
 					b.setProductionTimer(Archer.buildtime);
-					break;
-				}
-				case 'c': {
+				} else if (self.spearmanCount < enemy.cavalryCount) {
+					b.setInProduction('s');
+					b.setProductionTimer(Spearman.buildtime);
+				} else if (self.cavalryCount < enemy.archerCount) {
+					b.setInProduction('c');
 					b.setProductionTimer(Cavalry.buildtime);
-					break;
-				}
-				case 'n': {
-					b.setProductionTimer(10);
-				}
+				} else {
+					b.setInProduction('c');
+					b.setProductionTimer(Cavalry.buildtime);
 				}
 			}
 		} else {
@@ -77,7 +64,7 @@ public class RandomBehaviourAI implements AI {
 			if (u.getState().equals("idle")) {
 				u.setState(actions.get(random.nextInt(actions.size())));
 			}
-			action = u.determineAction(p, sp, model, enemy);
+			action = u.determineAction(p, sp, model, enemyID);
 		}
 		a.setIdle(false);
 		orderQueue.add(new Order(a, action));
@@ -87,9 +74,22 @@ public class RandomBehaviourAI implements AI {
 	@Override
 	public void run() {
 
+		inter=false;self = model.getPlayerList().get(playerID);
+		if (playerID == 1) {
+			enemyID = 2;
+			enemy = model.getPlayerList().get(2);
+		} else {
+			enemyID = 1;
+			enemy = model.getPlayerList().get(1);
+		}
 		// Generate actions maybe add timer to prevent overloading the queue
 
 		for (Asset a : model.getPlayerList().get(playerID).getAssets()) {
+
+			if (inter) {
+				inter=false;
+				break;
+			}
 			this.determineAction(a);
 		}
 
@@ -97,6 +97,14 @@ public class RandomBehaviourAI implements AI {
 
 	@Override
 	public void reset() {
+		inter=false;
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void interrupt() {
+		inter=true;
 		// TODO Auto-generated method stub
 		
 	}

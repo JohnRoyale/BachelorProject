@@ -180,8 +180,7 @@ public abstract class Unit extends Asset {
 					this.owner, true,type);
 			// Find a short path with least resistance to enemy
 			break;
-		// Attack closest enemy unit, maybe make it only attack its preferred
-		// enemy.
+		// Attack closest enemy unit
 		case "hunt":
 			// find closest enemy
 			// find action for shortest path

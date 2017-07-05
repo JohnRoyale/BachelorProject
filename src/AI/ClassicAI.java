@@ -18,7 +18,7 @@ import Main.Player;
 import PathFinder.*;
 
 public class ClassicAI implements AI {
-
+	boolean inter;
 	Model model;
 	int playerID;
 	Player enemy, self;
@@ -110,6 +110,7 @@ public class ClassicAI implements AI {
 
 	@Override
 	public void run() {
+		inter=false;
 		self = model.getPlayerList().get(playerID);
 		if (playerID == 1) {
 			enemy = model.getPlayerList().get(2);
@@ -119,6 +120,8 @@ public class ClassicAI implements AI {
 
 
 		for (Iterator<Asset> iter = self.getAssets().iterator(); iter.hasNext();) {
+			if (inter)
+				break;
 			Asset a = iter.next();
 			this.determineAction(a);
 		}
@@ -127,6 +130,14 @@ public class ClassicAI implements AI {
 
 	@Override
 	public void reset() {
+		// TODO Auto-generated method stub
+		inter=false;
+		
+	}
+
+	@Override
+	public void interrupt() {
+		inter=true;
 		// TODO Auto-generated method stub
 		
 	}
