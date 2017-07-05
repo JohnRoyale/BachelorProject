@@ -26,16 +26,19 @@ public class Controller extends Observable {
 	private View view;
 	Random r = new Random(System.currentTimeMillis());
 
-	public Controller(boolean q, boolean c, boolean e, String file) {
+	public Controller(boolean q, boolean c, boolean e, String file, boolean opponent) {
 		model = new Model("map2", c);
 		model.levelMap.printMap();
 		orderQueue = new ConcurrentLinkedQueue<Order>();
-		//player1 = new ClassicBehaviourAI(orderQueue, model, 1);
-		//player1 = new HuntAI(orderQueue, model, 1);
-		// player1 = new ProbabilityBehaviourAI(orderQueue, model, 1);
-		player1 = new RandomBehaviourAI(orderQueue, model, 1);
+		
+		if(opponent){
+			player1 = new RandomBehaviourAI(orderQueue, model, 1);
+		}else{
+			player1 = new ClassicBehaviourAI(orderQueue, model, 1);
+		}
+		
+		
 		player2 = new NeuralNetworkAI(orderQueue, model, 2, q, e, file);
-		// player2 = new HuntAI(orderQueue, model, 2);
 
 		p1 = new Thread(player1);
 		p2 = new Thread(player2);

@@ -14,9 +14,14 @@ public class MainTest {
 
 	public static void main(String[] args) throws FileNotFoundException {
 		// TODO Auto-generated method stub
-		String fileName = JOptionPane.showInputDialog("Input file id of network to test");
+
+		String[] opponent = { "Random", "Classic" };
+		String fileName = JOptionPane.showInputDialog("Input id of network to test");
 		long ctime = System.currentTimeMillis();
-		Controller controller = new Controller(false, true, false, fileName);
+		String input = (String) JOptionPane.showInputDialog(null, "Choose the opponent", "Opponent choice",
+				JOptionPane.QUESTION_MESSAGE, null, opponent, opponent[0]);
+		boolean enemy =input.equals(opponent[0]);
+		Controller controller = new Controller(false, true, false, fileName,enemy);
 
 		int prefix = 0;
 		int postfix = 0;

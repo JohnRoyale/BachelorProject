@@ -7,41 +7,64 @@ import javax.swing.JOptionPane;
 
 public class Main {
 
-	final static boolean fastForward = true;
-	final static boolean qlearning = true;
-	final static boolean capitalist = true;
-
 	public static void main(String[] args) throws InterruptedException {
-		String fileName = JOptionPane.showInputDialog("Input file to load neural network from");
-		Controller controller = new Controller(qlearning, capitalist, true, fileName);
+		String fileName = JOptionPane.showInputDialog("Input neural network id to store network to.");
+		String[] choices = { "Q-learning", "Monte-Carlo" };
+		String[] reward = { "Individual", "Shared" };
+		String[] opponent = { "Random", "Classic" };
+		String[] speeds ={"1","2","4","8","16","32","64"};
+
+		String input = (String) JOptionPane.showInputDialog(null, "Choose the learning algorithm", "Algorithm choice",
+				JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+
+		boolean qlearning = input.equals(choices[0]);
+
+		input = (String) JOptionPane.showInputDialog(null, "Choose the reward function", "Reward choice",
+				JOptionPane.QUESTION_MESSAGE, null, reward, reward[0]);
+		boolean capitalist = input.equals(reward[0]);
+		
+		input = (String) JOptionPane.showInputDialog(null, "Choose the opponent", "Opponent choice",
+				JOptionPane.QUESTION_MESSAGE, null, opponent, opponent[0]);
+		boolean enemy =input.equals(opponent[0]);
+
+
+		int n = JOptionPane.showConfirmDialog(null, "Do you want the games displayed", "Draw games",
+				JOptionPane.YES_NO_OPTION);
+
+		boolean draw = n == JOptionPane.YES_OPTION;
+		int speed = 1;
+		if (draw) {
+			speed= Integer.parseInt((String) JOptionPane.showInputDialog(null, "Choose speed of the simulation", "Speed choice",
+					JOptionPane.QUESTION_MESSAGE, null, speeds, speeds[0]));
+		}
+
+		Controller controller = new Controller(qlearning, capitalist, true, fileName,enemy);
 		System.out.println();
 		long startTime = System.currentTimeMillis();
 		long ctime = System.currentTimeMillis();
 		long gameTime;
 		long wins = 0;
-		boolean draw;
 		long equal = 0;
 		int j = 1;
 		for (int t = controller.getTrial(); t < 100; t++) {
-			
+
 			for (int i = controller.getEpoch() + 1; i <= 1; i++) {
 				int k = 0;
 				gameTime = System.currentTimeMillis();
-				draw = (i % 1) == 0;
 
 				while (!controller.gameOver() && k < 90 * 50) {
 					if ((System.currentTimeMillis() - ctime > 20)
-							|| (controller.queueFull() && (!draw || fastForward))) {
-						//draw = System.currentTimeMillis() - ctime > 20 &&
-						//draw;
+							|| (controller.queueFull() && (!draw || (System.currentTimeMillis() - ctime > 50/speed)))) {
+						// draw = System.currentTimeMillis() - ctime > 20 &&
+						// draw;
 						ctime = System.currentTimeMillis();
-						controller.update(false);
+						controller.update(draw);
 						k++;
 					}
 				}
 				ctime = System.currentTimeMillis();
 				try {
-					controller.backProp(draw, i,t);
+					controller.backProp(draw, i, t);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -58,8 +81,7 @@ public class Main {
 				if (i % 1 == 0)
 					System.out.println("Neural AI won " + wins + " games drawed " + equal + " games out of the last "
 							+ j + " games played");
-				
-				
+
 				System.out.println();
 
 				controller.reset();
@@ -77,7 +99,7 @@ public class Main {
 			j = 1;
 			equal = 0;
 			wins = 0;
-			
+
 		}
 		System.exit(0);
 	}
