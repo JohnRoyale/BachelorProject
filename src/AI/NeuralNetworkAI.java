@@ -361,6 +361,8 @@ public class NeuralNetworkAI implements AI {
 		} else {
 			this.chance = 100;
 		}
+		
+		System.out.println("Loaded: " + fileName);
 		ois.close();
 	}
 

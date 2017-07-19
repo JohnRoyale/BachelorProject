@@ -42,9 +42,9 @@ public class ResistancePathFinder {
 		public int compareTo(Position s) {
 
 			
-			if (this.total > s.total+3){
+			if (this.total > s.total+m.size*1.2){
 					return 1;
-			} else 	if (s.total > this.total+3){
+			} else 	if (s.total > this.total+m.size*1.2){
 					return -1;
 			}
 

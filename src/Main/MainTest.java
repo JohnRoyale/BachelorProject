@@ -34,7 +34,7 @@ public class MainTest {
 		System.out.println("trial,epoch,winRate,tieRate,lossRate,Defend,Defensive invade, Evasive invade, Hunt");
 		System.setOut(stdout);
 
-		for (int t = prefix; t < 1000; t++) {
+		for (int t = prefix; t < 10000; t++) {
 
 			while (controller.load(name)) {
 				double equal = 0;

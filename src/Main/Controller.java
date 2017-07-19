@@ -31,6 +31,7 @@ public class Controller extends Observable {
 		model.levelMap.printMap();
 		orderQueue = new ConcurrentLinkedQueue<Order>();
 		
+		System.out.println(opponent);
 		if(opponent){
 			player1 = new RandomBehaviourAI(orderQueue, model, 1);
 		}else{
@@ -39,7 +40,8 @@ public class Controller extends Observable {
 		
 		
 		player2 = new NeuralNetworkAI(orderQueue, model, 2, q, e, file);
-
+		//player2=new ClassicBehaviourAI(orderQueue, model, 2);
+		
 		p1 = new Thread(player1);
 		p2 = new Thread(player2);
 
@@ -159,6 +161,13 @@ public class Controller extends Observable {
 	}
 
 	public int[] count() {
+		
+		if(!(player2 instanceof NeuralNetworkAI)){
+			int[] t={0,0,0,0};
+			return t;
+		}
+		
+		
 		return ((NeuralNetworkAI) player2).getCount();
 	}
 
@@ -179,6 +188,8 @@ public class Controller extends Observable {
 
 	public boolean load(String name) {
 		// TODO Auto-generated method stub
+		if(!(player2 instanceof NeuralNetworkAI))return true;
+		
 		File dir = new File("NeuralNetworks");
 
 		if (new File(dir, name).exists()) {

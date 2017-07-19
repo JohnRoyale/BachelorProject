@@ -48,7 +48,7 @@ public class Main {
 		int j = 1;
 		for (int t = controller.getTrial(); t < 100; t++) {
 
-			for (int i = controller.getEpoch() + 1; i <= 1; i++) {
+			for (int i = controller.getEpoch() + 1; i <= 26; i++) {
 				int k = 0;
 				gameTime = System.currentTimeMillis();
 
@@ -64,7 +64,7 @@ public class Main {
 				}
 				ctime = System.currentTimeMillis();
 				try {
-					controller.backProp(draw, i, t);
+					controller.backProp(true, i, t);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
